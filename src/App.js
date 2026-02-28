@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import supabase from './supabaseClient';
 import './App.css';
 import MapView from './MapView';
+import Auth from './Auth';
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -9,14 +10,30 @@ function App() {
   const [filterVehicle, setFilterVehicle] = useState('all');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState('');
+  const [user, setUser] = useState(null);
+  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setShowAuth(false);
+    });
+
     async function getEvents() {
       const { data } = await supabase.from('events').select('*');
       setEvents(data || []);
     }
     getEvents();
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   const filteredEvents = events.filter(event => {
     const matchesType = filterType === 'all' || event.event_type === filterType;
@@ -26,10 +43,32 @@ function App() {
     return matchesType && matchesVehicle && matchesStart && matchesEnd;
   });
 
+  if (showAuth) {
+    return (
+      <div>
+        <div className="header">
+          <h1 onClick={() => setShowAuth(false)} style={{ cursor: 'pointer' }}>Varoom</h1>
+          <button onClick={() => setShowAuth(false)} className="header-btn">Back</button>
+        </div>
+        <Auth />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="header">
         <h1>Varoom</h1>
+        <div className="header-right">
+          {user ? (
+            <>
+              <span className="header-email">{user.email}</span>
+              <button onClick={handleSignOut} className="header-btn">Sign Out</button>
+            </>
+          ) : (
+            <button onClick={() => setShowAuth(true)} className="header-btn">Sign In</button>
+          )}
+        </div>
       </div>
       <MapView events={filteredEvents} />
       <div className="filters">
