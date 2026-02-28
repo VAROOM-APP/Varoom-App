@@ -270,3 +270,23 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
+.event-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.save-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaaaaa;
+  padding: 0;
+  line-height: 1;
+}
+
+.save-btn.saved {
+  color: #e63946;
+}

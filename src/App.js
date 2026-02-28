@@ -3,6 +3,7 @@ import supabase from './supabaseClient';
 import './App.css';
 import MapView from './MapView';
 import Auth from './Auth';
+import SavedEvents from './SavedEvents';
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -13,17 +14,19 @@ function App() {
   const [endDate, setEndDate] = useState('');
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [savedEvents, setSavedEvents] = useState([]);
+  const [currentPage, setCurrentPage] = useState('home');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) fetchSavedEvents(session.user.id);
     });
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setShowAuth(false);
+      if (session?.user) fetchSavedEvents(session.user.id);
     });
-
     async function getEvents() {
       const { data } = await supabase.from('events').select('*');
       setEvents(data || []);
@@ -31,14 +34,31 @@ function App() {
     getEvents();
   }, []);
 
+  const fetchSavedEvents = async (userId) => {
+    const { data } = await supabase.from('saved_events').select('event_id').eq('user_id', userId);
+    setSavedEvents(data ? data.map(d => d.event_id) : []);
+  };
+
+  const toggleSaveEvent = async (eventId) => {
+    if (!user) { setShowAuth(true); return; }
+    const isSaved = savedEvents.includes(eventId);
+    if (isSaved) {
+      await supabase.from('saved_events').delete().eq('user_id', user.id).eq('event_id', eventId);
+      setSavedEvents(savedEvents.filter(id => id !== eventId));
+    } else {
+      await supabase.from('saved_events').insert({ user_id: user.id, event_id: eventId });
+      setSavedEvents([...savedEvents, eventId]);
+    }
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setSavedEvents([]);
+    setCurrentPage('home');
   };
 
-  const marques = ['all', ...new Set(events
-    .filter(e => e.marque)
-    .map(e => e.marque))];
+  const marques = ['all', ...new Set(events.filter(e => e.marque).map(e => e.marque))];
 
   const filteredEvents = events.filter(event => {
     const matchesType = filterType === 'all' || event.event_type === filterType;
@@ -64,11 +84,14 @@ function App() {
   return (
     <div>
       <div className="header">
-        <h1>Varoom</h1>
+        <h1 onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer' }}>Varoom</h1>
         <div className="header-right">
           {user ? (
             <>
               <span className="header-email">{user.email}</span>
+              <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className="header-btn">
+                {currentPage === 'saved' ? 'Back' : '♥ Saved'}
+              </button>
               <button onClick={handleSignOut} className="header-btn">Sign Out</button>
             </>
           ) : (
@@ -76,66 +99,64 @@ function App() {
           )}
         </div>
       </div>
-      <MapView events={filteredEvents} />
-      <div className="filters">
-        <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
-        <button onClick={() => setFilterType('meet')} className={filterType === 'meet' ? 'active' : ''}>Meets</button>
-        <button onClick={() => setFilterType('auction')} className={filterType === 'auction' ? 'active' : ''}>Auctions</button>
-        <button onClick={() => setFilterType('race')} className={filterType === 'race' ? 'active' : ''}>Races</button>
-        <button onClick={() => setFilterType('autojumble')} className={filterType === 'autojumble' ? 'active' : ''}>Autojumbles</button>
-        <div className="filter-divider" />
-        <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
-        <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
-        <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
-        <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
-        <div className="filter-divider" />
-        <select
-          value={filterMarque}
-          onChange={e => setFilterMarque(e.target.value)}
-          className="marque-select"
-        >
-          {marques.map(marque => (
-            <option key={marque} value={marque}>
-              {marque === 'all' ? 'All Marques' : marque}
-            </option>
-          ))}
-        </select>
-        <div className="date-filters">
-          <input
-            type="date"
-            value={startDate}
-            onChange={e => {
-              setStartDate(e.target.value);
-              setEndDate('');
-              setTimeout(() => document.getElementById('endDate').showPicker(), 100);
-            }}
-          />
-          <input
-            id="endDate"
-            type="date"
-            value={endDate}
-            min={startDate}
-            onChange={e => setEndDate(e.target.value)}
-          />
+      {currentPage === 'saved' && user && (
+        <SavedEvents user={user} onUnsave={(eventId) => toggleSaveEvent(eventId)} />
+      )}
+      <div style={{ display: currentPage === 'saved' ? 'none' : 'block' }}>
+        <MapView events={filteredEvents} />
+        <div className="filters">
+          <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
+          <button onClick={() => setFilterType('meet')} className={filterType === 'meet' ? 'active' : ''}>Meets</button>
+          <button onClick={() => setFilterType('auction')} className={filterType === 'auction' ? 'active' : ''}>Auctions</button>
+          <button onClick={() => setFilterType('race')} className={filterType === 'race' ? 'active' : ''}>Races</button>
+          <button onClick={() => setFilterType('autojumble')} className={filterType === 'autojumble' ? 'active' : ''}>Autojumbles</button>
+          <div className="filter-divider" />
+          <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
+          <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
+          <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
+          <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
+          <div className="filter-divider" />
+          <select value={filterMarque} onChange={e => setFilterMarque(e.target.value)} className="marque-select">
+            {marques.map(marque => (
+              <option key={marque} value={marque}>{marque === 'all' ? 'All Marques' : marque}</option>
+            ))}
+          </select>
+          <div className="date-filters">
+            <input
+              type="date"
+              value={startDate}
+              onChange={e => {
+                setStartDate(e.target.value);
+                setEndDate('');
+                setTimeout(() => document.getElementById('endDate').showPicker(), 100);
+              }}
+            />
+            <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
+          </div>
         </div>
-      </div>
-      <div className="events-list">
-        {filteredEvents.length === 0 ? (
-          <p>No events found</p>
-        ) : (
-          filteredEvents.map(event => (
-            <div key={event.id} className="event-card">
-              <h2>{event.title}</h2>
-              <div className="event-meta">
-                <span>{event.date}</span>
-                <span>{event.start_time}</span>
-                <span>{event.location_name}</span>
-                <span className="event-type">{event.event_type}</span>
-                {event.marque && <span className="event-type">{event.marque}</span>}
+        <div className="events-list">
+          {filteredEvents.length === 0 ? (
+            <p>No events found</p>
+          ) : (
+            filteredEvents.map(event => (
+              <div key={event.id} className="event-card">
+                <div className="event-card-header">
+                  <h2>{event.title}</h2>
+                  <button onClick={() => toggleSaveEvent(event.id)} className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}>
+                    {savedEvents.includes(event.id) ? '♥' : '♡'}
+                  </button>
+                </div>
+                <div className="event-meta">
+                  <span>{event.date}</span>
+                  <span>{event.start_time}</span>
+                  <span>{event.location_name}</span>
+                  <span className="event-type">{event.event_type}</span>
+                  {event.marque && <span className="event-type">{event.marque}</span>}
+                </div>
               </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
