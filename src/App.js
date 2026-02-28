@@ -8,6 +8,7 @@ function App() {
   const [events, setEvents] = useState([]);
   const [filterType, setFilterType] = useState('all');
   const [filterVehicle, setFilterVehicle] = useState('all');
+  const [filterMarque, setFilterMarque] = useState('all');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState('');
   const [user, setUser] = useState(null);
@@ -35,12 +36,17 @@ function App() {
     setUser(null);
   };
 
+  const marques = ['all', ...new Set(events
+    .filter(e => e.marque)
+    .map(e => e.marque))];
+
   const filteredEvents = events.filter(event => {
     const matchesType = filterType === 'all' || event.event_type === filterType;
     const matchesVehicle = filterVehicle === 'all' || event.vehicle_type === filterVehicle;
+    const matchesMarque = filterMarque === 'all' || event.marque === filterMarque;
     const matchesStart = !startDate || event.date >= startDate;
     const matchesEnd = !endDate || event.date <= endDate;
-    return matchesType && matchesVehicle && matchesStart && matchesEnd;
+    return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd;
   });
 
   if (showAuth) {
@@ -82,6 +88,18 @@ function App() {
         <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
         <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
         <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
+        <div className="filter-divider" />
+        <select
+          value={filterMarque}
+          onChange={e => setFilterMarque(e.target.value)}
+          className="marque-select"
+        >
+          {marques.map(marque => (
+            <option key={marque} value={marque}>
+              {marque === 'all' ? 'All Marques' : marque}
+            </option>
+          ))}
+        </select>
         <div className="date-filters">
           <input
             type="date"
@@ -113,6 +131,7 @@ function App() {
                 <span>{event.start_time}</span>
                 <span>{event.location_name}</span>
                 <span className="event-type">{event.event_type}</span>
+                {event.marque && <span className="event-type">{event.marque}</span>}
               </div>
             </div>
           ))

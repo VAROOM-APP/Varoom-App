@@ -261,3 +261,12 @@ body {
 .header-btn:hover {
   background-color: #c1121f;
 }
+.marque-select {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
