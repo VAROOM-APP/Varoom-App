@@ -6,6 +6,34 @@ const defaultCenter = {
   lng: -0.1278
 };
 
+const getMarkerIcon = (eventType) => {
+  const colors = {
+    meets: '#e63946',
+    auctions: '#f4a261',
+    races: '#2a9d8f',
+    autojumbles: '#457b9d',
+    default: '#888888'
+  };
+
+  const emojis = {
+    meets: '🏎',
+    auctions: '🔨',
+    races: '🏁',
+    autojumbles: '🔧',
+    default: '📍'
+  };
+
+  const color = colors[eventType] || colors.default;
+  const emoji = emojis[eventType] || emojis.default;
+
+  return `data:image/svg+xml,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+      <rect x="0" y="0" width="36" height="36" rx="8" ry="8" fill="${color}"/>
+      <text x="18" y="24" text-anchor="middle" font-size="18" fill="white">${emoji}</text>
+    </svg>
+  `)}`;
+};
+
 function MapView({ events, selectedEvent, setSelectedEvent }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
 
@@ -63,6 +91,11 @@ function MapView({ events, selectedEvent, setSelectedEvent }) {
                 key={event.id}
                 position={{ lat: event.latitude, lng: event.longitude }}
                 title={event.title}
+                icon={{
+                  url: getMarkerIcon(event.event_type),
+                  scaledSize: new window.google.maps.Size(32, 32),
+                  anchor: new window.google.maps.Point(16, 16)
+                }}
                 onClick={() => setSelectedEvent(event)}
               />
             ))}
