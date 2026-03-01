@@ -42,6 +42,9 @@ function MapView({ events }) {
           {selectedEvent.description && (
             <p className="sidebar-description">{selectedEvent.description}</p>
           )}
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${selectedEvent.latitude},${selectedEvent.longitude}`} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">
+            Get Directions
+          </a>
           {selectedEvent.external_link && (
             <a href={selectedEvent.external_link} target="_blank" rel="noreferrer" className="sidebar-link">
               More Info / Tickets

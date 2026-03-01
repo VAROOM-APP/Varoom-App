@@ -290,3 +290,11 @@ body {
 .save-btn.saved {
   color: #e63946;
 }
+.directions-btn {
+  background-color: #2a2a2a;
+  margin-bottom: 8px;
+}
+
+.directions-btn:hover {
+  background-color: #333333;
+}
