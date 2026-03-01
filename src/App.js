@@ -16,6 +16,7 @@ function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [savedEvents, setSavedEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState('home');
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -103,13 +104,17 @@ function App() {
         <SavedEvents user={user} onUnsave={(eventId) => toggleSaveEvent(eventId)} />
       )}
       <div style={{ display: currentPage === 'saved' ? 'none' : 'block' }}>
-        <MapView events={filteredEvents} />
+        <MapView
+          events={filteredEvents}
+          selectedEvent={selectedEvent}
+          setSelectedEvent={setSelectedEvent}
+        />
         <div className="filters">
           <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
-          <button onClick={() => setFilterType('meet')} className={filterType === 'meet' ? 'active' : ''}>Meets</button>
-          <button onClick={() => setFilterType('auction')} className={filterType === 'auction' ? 'active' : ''}>Auctions</button>
-          <button onClick={() => setFilterType('race')} className={filterType === 'race' ? 'active' : ''}>Races</button>
-          <button onClick={() => setFilterType('autojumble')} className={filterType === 'autojumble' ? 'active' : ''}>Autojumbles</button>
+          <button onClick={() => setFilterType('meets')} className={filterType === 'meets' ? 'active' : ''}>Meets</button>
+          <button onClick={() => setFilterType('auctions')} className={filterType === 'auctions' ? 'active' : ''}>Auctions</button>
+          <button onClick={() => setFilterType('races')} className={filterType === 'races' ? 'active' : ''}>Races</button>
+          <button onClick={() => setFilterType('autojumbles')} className={filterType === 'autojumbles' ? 'active' : ''}>Autojumbles</button>
           <div className="filter-divider" />
           <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
           <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
@@ -139,10 +144,23 @@ function App() {
             <p>No events found</p>
           ) : (
             filteredEvents.map(event => (
-              <div key={event.id} className="event-card">
+              <div
+                key={event.id}
+                className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
+                onClick={() => {
+                  setSelectedEvent(event);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
                 <div className="event-card-header">
                   <h2>{event.title}</h2>
-                  <button onClick={() => toggleSaveEvent(event.id)} className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSaveEvent(event.id);
+                    }}
+                    className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
+                  >
                     {savedEvents.includes(event.id) ? '♥' : '♡'}
                   </button>
                 </div>

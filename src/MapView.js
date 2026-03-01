@@ -6,9 +6,8 @@ const defaultCenter = {
   lng: -0.1278
 };
 
-function MapView({ events }) {
+function MapView({ events, selectedEvent, setSelectedEvent }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
-  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -56,8 +55,8 @@ function MapView({ events }) {
         <LoadScript googleMapsApiKey="AIzaSyBs3eAymhwEl1dKlALubuxwS69ZkdSf5_g">
           <GoogleMap
             mapContainerStyle={{ width: '100%', height: '500px' }}
-            center={userLocation}
-            zoom={10}
+            center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : userLocation}
+            zoom={selectedEvent ? 13 : 10}
           >
             {events.map(event => (
               <Marker
