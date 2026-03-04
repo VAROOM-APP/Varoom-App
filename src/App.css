@@ -26,6 +26,33 @@ body {
   text-transform: uppercase;
 }
 
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-email {
+  color: #aaaaaa;
+  font-size: 14px;
+}
+
+.header-btn {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.header-btn:hover {
+  background-color: #c1121f;
+}
+
 .events-list {
   padding: 24px;
   max-width: 800px;
@@ -38,10 +65,23 @@ body {
   padding: 20px;
   margin-bottom: 16px;
   border-left: 4px solid #e63946;
+  cursor: pointer;
 }
 
 .event-card h2 {
   font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.event-card.selected {
+  border-left: 4px solid #ffffff;
+  background-color: #2a2a2a;
+}
+
+.event-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 8px;
 }
 
@@ -50,6 +90,7 @@ body {
   font-size: 14px;
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .event-type {
@@ -59,6 +100,20 @@ body {
   border-radius: 20px;
   font-size: 12px;
   text-transform: capitalize;
+}
+
+.save-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaaaaa;
+  padding: 0;
+  line-height: 1;
+}
+
+.save-btn.saved {
+  color: #e63946;
 }
 
 .filters {
@@ -89,6 +144,13 @@ body {
   background-color: #e63946;
 }
 
+.filter-divider {
+  width: 2px;
+  height: 24px;
+  background-color: #333333;
+  margin: 0 4px;
+}
+
 .date-filters {
   display: flex;
   gap: 10px;
@@ -104,6 +166,17 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
+
+.marque-select {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
 .event-sidebar {
   width: 300px;
   background-color: #1a1a1a;
@@ -165,12 +238,16 @@ body {
 .sidebar-link:hover {
   background-color: #c1121f;
 }
-.filter-divider {
-  width: 2px;
-  height: 24px;
-  background-color: #333333;
-  margin: 0 4px;
+
+.directions-btn {
+  background-color: #2a2a2a;
+  margin-bottom: 8px;
 }
+
+.directions-btn:hover {
+  background-color: #333333;
+}
+
 .auth-container {
   max-width: 400px;
   margin: 60px auto;
@@ -235,74 +312,219 @@ body {
 .auth-switch:hover {
   color: #ffffff;
 }
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+
+.homepage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
-.header-email {
+.hero {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 50%, #1a0a0a 100%);
+  border-radius: 16px;
+  padding: 80px 32px;
+  text-align: center;
+  border: 1px solid #e63946;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(230, 57, 70, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content h2 {
+  font-size: 36px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.hero-content p {
   color: #aaaaaa;
-  font-size: 14px;
+  font-size: 16px;
+  margin-bottom: 28px;
 }
 
-.header-btn {
-  background-color: #e63946;
-  color: white;
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.hero-btn {
+  padding: 12px 24px;
+  border-radius: 24px;
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
-.header-btn:hover {
-  background-color: #c1121f;
+.hero-btn.primary {
+  background-color: #e63946;
+  color: white;
 }
-.marque-select {
+
+.hero-btn.secondary {
   background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444444;
+}
+
+.hero-btn:hover {
+  opacity: 0.9;
+}
+
+.homepage-section {
+  margin-bottom: 40px;
+}
+
+.homepage-section h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
   color: #ffffff;
-  border: none;
-  padding: 8px 18px;
+  border-left: 4px solid #e63946;
+  padding-left: 12px;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.featured-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  border: 1px solid #2a2a2a;
+  transition: border-color 0.2s;
+}
+
+.featured-card:hover {
+  border-color: #e63946;
+}
+
+.featured-placeholder {
+  background-color: #2a2a2a;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+
+.featured-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.featured-content {
+  padding: 16px;
+}
+
+.featured-tag {
+  background-color: #e63946;
+  color: white;
+  padding: 2px 10px;
   border-radius: 20px;
-  cursor: pointer;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.featured-content h4 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.featured-content p {
+  color: #aaaaaa;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.featured-link {
+  color: #e63946;
   font-size: 14px;
 }
-.event-card-header {
+
+.recent-events {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-event-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  border-left: 4px solid #e63946;
+}
+
+.recent-event-card:hover {
+  background-color: #2a2a2a;
+}
+
+.recent-event-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.save-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #aaaaaa;
-  padding: 0;
-  line-height: 1;
+.recent-event-header h4 {
+  font-size: 16px;
 }
 
-.save-btn.saved {
-  color: #e63946;
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
 }
-.directions-btn {
-  background-color: #2a2a2a;
+
+.news-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+}
+
+.news-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.news-content {
+  padding: 16px;
+}
+
+.news-content h4 {
+  font-size: 16px;
   margin-bottom: 8px;
 }
 
-.directions-btn:hover {
-  background-color: #333333;
-}
-.event-card.selected {
-  border-left: 4px solid #ffffff;
-  background-color: #2a2a2a;
-}
-
-.event-card {
-  cursor: pointer;
+.news-content p {
+  color: #aaaaaa;
+  font-size: 14px;
+  line-height: 1.5;
 }

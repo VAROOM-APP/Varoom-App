@@ -4,6 +4,7 @@ import './App.css';
 import MapView from './MapView';
 import Auth from './Auth';
 import SavedEvents from './SavedEvents';
+import HomePage from './HomePage';
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -87,11 +88,11 @@ function App() {
       <div className="header">
         <h1 onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer' }}>Varoom</h1>
         <div className="header-right">
+          <button onClick={() => setCurrentPage('events')} className={`header-btn ${currentPage === 'events' ? 'active' : ''}`}>Events</button>
           {user ? (
             <>
-              <span className="header-email">{user.email}</span>
-              <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className="header-btn">
-                {currentPage === 'saved' ? 'Back' : '♥ Saved'}
+              <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className={`header-btn ${currentPage === 'saved' ? 'active' : ''}`}>
+                ♥ Saved
               </button>
               <button onClick={handleSignOut} className="header-btn">Sign Out</button>
             </>
@@ -100,10 +101,16 @@ function App() {
           )}
         </div>
       </div>
+
+      {currentPage === 'home' && (
+        <HomePage onNavigate={(page) => setCurrentPage(page)} />
+      )}
+
       {currentPage === 'saved' && user && (
         <SavedEvents user={user} onUnsave={(eventId) => toggleSaveEvent(eventId)} />
       )}
-      <div style={{ display: currentPage === 'saved' ? 'none' : 'block' }}>
+
+      <div style={{ display: currentPage === 'events' ? 'block' : 'none' }}>
         <MapView
           events={filteredEvents}
           selectedEvent={selectedEvent}

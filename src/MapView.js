@@ -36,6 +36,7 @@ const getMarkerIcon = (eventType) => {
 
 function MapView({ events, selectedEvent, setSelectedEvent }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -80,13 +81,16 @@ function MapView({ events, selectedEvent, setSelectedEvent }) {
         </div>
       )}
       <div style={{ flex: 1 }}>
-        <LoadScript googleMapsApiKey="AIzaSyBs3eAymhwEl1dKlALubuxwS69ZkdSf5_g">
+        <LoadScript
+          googleMapsApiKey="AIzaSyBs3eAymhwEl1dKlALubuxwS69ZkdSf5_g"
+          onLoad={() => setMapLoaded(true)}
+        >
           <GoogleMap
             mapContainerStyle={{ width: '100%', height: '500px' }}
             center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : userLocation}
             zoom={selectedEvent ? 13 : 10}
           >
-            {events.map(event => (
+            {mapLoaded && events.map(event => (
               <Marker
                 key={event.id}
                 position={{ lat: event.latitude, lng: event.longitude }}
