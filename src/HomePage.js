@@ -38,8 +38,8 @@ function HomePage({ onNavigate }) {
           <h2>Find Car & Bike Events Near You</h2>
           <p>Meets, auctions, races and autojumbles all in one place</p>
           <div className="hero-buttons">
-            <button onClick={() => onNavigate('events')} className="hero-btn primary">View Map</button>
-            <button onClick={() => onNavigate('events')} className="hero-btn secondary">Browse Events</button>
+            <button onClick={() => onNavigate('events')} className="hero-btn primary">Browse Events</button>
+            <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Map View</button>
           </div>
         </div>
       </div>

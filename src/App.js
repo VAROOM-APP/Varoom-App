@@ -11,6 +11,7 @@ function App() {
   const [filterType, setFilterType] = useState('all');
   const [filterVehicle, setFilterVehicle] = useState('all');
   const [filterMarque, setFilterMarque] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState('');
   const [user, setUser] = useState(null);
@@ -18,6 +19,8 @@ function App() {
   const [savedEvents, setSavedEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [mapExpanded, setMapExpanded] = useState(false);
+  const [mapFullScreen, setMapFullScreen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -68,7 +71,11 @@ function App() {
     const matchesMarque = filterMarque === 'all' || event.marque === filterMarque;
     const matchesStart = !startDate || event.date >= startDate;
     const matchesEnd = !endDate || event.date <= endDate;
-    return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd;
+    const matchesSearch = !searchQuery ||
+      event.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.marque?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd && matchesSearch;
   });
 
   if (showAuth) {
@@ -88,6 +95,16 @@ function App() {
       <div className="header">
         <h1 onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer' }}>Varoom</h1>
         <div className="header-right">
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={e => {
+              setSearchQuery(e.target.value);
+              if (currentPage !== 'events') setCurrentPage('events');
+            }}
+            className="search-input header-search"
+          />
           <button onClick={() => setCurrentPage('events')} className={`header-btn ${currentPage === 'events' ? 'active' : ''}`}>Events</button>
           {user ? (
             <>
@@ -103,86 +120,96 @@ function App() {
       </div>
 
       {currentPage === 'home' && (
-        <HomePage onNavigate={(page) => setCurrentPage(page)} />
+        <HomePage onNavigate={(page, openMap) => {
+          setCurrentPage(page);
+          setMapExpanded(openMap ? true : false);
+          setMapFullScreen(openMap ? true : false);
+        }} />
       )}
 
       {currentPage === 'saved' && user && (
         <SavedEvents user={user} onUnsave={(eventId) => toggleSaveEvent(eventId)} />
       )}
 
-      <div style={{ display: currentPage === 'events' ? 'block' : 'none' }}>
-        <MapView
-          events={filteredEvents}
-          selectedEvent={selectedEvent}
-          setSelectedEvent={setSelectedEvent}
-        />
-        <div className="filters">
-          <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
-          <button onClick={() => setFilterType('meets')} className={filterType === 'meets' ? 'active' : ''}>Meets</button>
-          <button onClick={() => setFilterType('auctions')} className={filterType === 'auctions' ? 'active' : ''}>Auctions</button>
-          <button onClick={() => setFilterType('races')} className={filterType === 'races' ? 'active' : ''}>Races</button>
-          <button onClick={() => setFilterType('autojumbles')} className={filterType === 'autojumbles' ? 'active' : ''}>Autojumbles</button>
-          <div className="filter-divider" />
-          <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
-          <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
-          <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
-          <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
-          <div className="filter-divider" />
-          <select value={filterMarque} onChange={e => setFilterMarque(e.target.value)} className="marque-select">
-            {marques.map(marque => (
-              <option key={marque} value={marque}>{marque === 'all' ? 'All Marques' : marque}</option>
-            ))}
-          </select>
-          <div className="date-filters">
-            <input
-              type="date"
-              value={startDate}
-              onChange={e => {
-                setStartDate(e.target.value);
-                setEndDate('');
-                setTimeout(() => document.getElementById('endDate').showPicker(), 100);
-              }}
-            />
-            <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
+      {currentPage === 'events' && (
+        <div>
+          <MapView
+            events={filteredEvents}
+            selectedEvent={selectedEvent}
+            setSelectedEvent={setSelectedEvent}
+            mapExpanded={mapExpanded}
+            setMapExpanded={setMapExpanded}
+            mapFullScreen={mapFullScreen}
+            setMapFullScreen={setMapFullScreen}
+          />
+          <div className="filters">
+            <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
+            <button onClick={() => setFilterType('meets')} className={filterType === 'meets' ? 'active' : ''}>Meets</button>
+            <button onClick={() => setFilterType('auctions')} className={filterType === 'auctions' ? 'active' : ''}>Auctions</button>
+            <button onClick={() => setFilterType('races')} className={filterType === 'races' ? 'active' : ''}>Races</button>
+            <button onClick={() => setFilterType('autojumbles')} className={filterType === 'autojumbles' ? 'active' : ''}>Autojumbles</button>
+            <div className="filter-divider" />
+            <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
+            <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
+            <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
+            <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
+            <div className="filter-divider" />
+            <select value={filterMarque} onChange={e => setFilterMarque(e.target.value)} className="marque-select">
+              {marques.map(marque => (
+                <option key={marque} value={marque}>{marque === 'all' ? 'All Marques' : marque}</option>
+              ))}
+            </select>
+            <div className="date-filters">
+              <input
+                type="date"
+                value={startDate}
+                onChange={e => {
+                  setStartDate(e.target.value);
+                  setEndDate('');
+                  setTimeout(() => document.getElementById('endDate').showPicker(), 100);
+                }}
+              />
+              <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
+            </div>
+          </div>
+          <div className="events-list">
+            {filteredEvents.length === 0 ? (
+              <p>No events found</p>
+            ) : (
+              filteredEvents.map(event => (
+                <div
+                  key={event.id}
+                  className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedEvent(event);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  <div className="event-card-header">
+                    <h2>{event.title}</h2>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSaveEvent(event.id);
+                      }}
+                      className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
+                    >
+                      {savedEvents.includes(event.id) ? '♥' : '♡'}
+                    </button>
+                  </div>
+                  <div className="event-meta">
+                    <span>{event.date}</span>
+                    <span>{event.start_time}</span>
+                    <span>{event.location_name}</span>
+                    <span className="event-type">{event.event_type}</span>
+                    {event.marque && <span className="event-type">{event.marque}</span>}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
-        <div className="events-list">
-          {filteredEvents.length === 0 ? (
-            <p>No events found</p>
-          ) : (
-            filteredEvents.map(event => (
-              <div
-                key={event.id}
-                className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
-                onClick={() => {
-                  setSelectedEvent(event);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              >
-                <div className="event-card-header">
-                  <h2>{event.title}</h2>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleSaveEvent(event.id);
-                    }}
-                    className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
-                  >
-                    {savedEvents.includes(event.id) ? '♥' : '♡'}
-                  </button>
-                </div>
-                <div className="event-meta">
-                  <span>{event.date}</span>
-                  <span>{event.start_time}</span>
-                  <span>{event.location_name}</span>
-                  <span className="event-type">{event.event_type}</span>
-                  {event.marque && <span className="event-type">{event.marque}</span>}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
