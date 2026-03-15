@@ -78,6 +78,16 @@ function App() {
     return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd && matchesSearch;
   });
 
+  const getCalendarUrl = (event) => {
+    const date = event.date.replace(/-/g, '');
+    const startTime = event.start_time ? event.start_time.replace(/:/g, '').slice(0, 6) : '090000';
+    const endHour = String(parseInt(event.start_time ? event.start_time.slice(0, 2) : '09') + 2).padStart(2, '0');
+    const endTime = endHour + (event.start_time ? event.start_time.slice(3, 5) : '00') + '00';
+    const location = event.location_name + (event.latitude ? ' (' + event.latitude + ',' + event.longitude + ')' : '');
+    const details = (event.description || 'Event found on Varoom') + (event.external_link ? '\n\nMore info: ' + event.external_link : '') + '\n\nFind more events at varoom.app';
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(event.title) + '&dates=' + date + 'T' + startTime + 'Z/' + date + 'T' + endTime + 'Z&location=' + encodeURIComponent(location) + '&details=' + encodeURIComponent(details);
+  };
+
   if (showAuth) {
     return (
       <div>
@@ -141,6 +151,7 @@ function App() {
             setMapExpanded={setMapExpanded}
             mapFullScreen={mapFullScreen}
             setMapFullScreen={setMapFullScreen}
+            getCalendarUrl={getCalendarUrl}
           />
           <div className="filters">
             <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
@@ -177,33 +188,51 @@ function App() {
               <p>No events found</p>
             ) : (
               filteredEvents.map(event => (
-                <div
-                  key={event.id}
-                  className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
-                  onClick={() => {
-                    setSelectedEvent(event);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                >
-                  <div className="event-card-header">
-                    <h2>{event.title}</h2>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleSaveEvent(event.id);
-                      }}
-                      className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
-                    >
-                      {savedEvents.includes(event.id) ? '♥' : '♡'}
-                    </button>
+                <div key={event.id}>
+                  <div
+                    className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedEvent(selectedEvent?.id === event.id ? null : event);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <div className="event-card-header">
+                      <h2>{event.title}</h2>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSaveEvent(event.id);
+                        }}
+                        className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
+                      >
+                        {savedEvents.includes(event.id) ? '♥' : '♡'}
+                      </button>
+                    </div>
+                    <div className="event-meta">
+                      <span>{event.date}</span>
+                      <span>{event.start_time}</span>
+                      <span>{event.location_name}</span>
+                      <span className="event-type">{event.event_type}</span>
+                      {event.marque && <span className="event-type">{event.marque}</span>}
+                    </div>
                   </div>
-                  <div className="event-meta">
-                    <span>{event.date}</span>
-                    <span>{event.start_time}</span>
-                    <span>{event.location_name}</span>
-                    <span className="event-type">{event.event_type}</span>
-                    {event.marque && <span className="event-type">{event.marque}</span>}
-                  </div>
+                  {selectedEvent?.id === event.id && !mapExpanded && (
+                    <div className="event-detail-panel">
+                      <div className="sidebar-meta">
+                        <p>📅 {event.date}</p>
+                        <p>🕐 {event.start_time}</p>
+                        <p>📍 {event.location_name}</p>
+                        <p>🚗 {event.vehicle_type}</p>
+                        {event.marque && <p>🏎 {event.marque}</p>}
+                      </div>
+                      {event.description && <p className="sidebar-description">{event.description}</p>}
+                      <div className="event-detail-actions">
+                        <a href={'https://www.google.com/maps/dir/?api=1&destination=' + event.latitude + ',' + event.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
+                        <a href={getCalendarUrl(event)} target="_blank" rel="noreferrer" className="sidebar-link calendar-btn">📅 Add to Calendar</a>
+                        {event.external_link && <a href={event.external_link} target="_blank" rel="noreferrer" className="sidebar-link">More Info / Tickets</a>}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             )}
