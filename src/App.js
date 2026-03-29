@@ -7,7 +7,7 @@ import Auth from './Auth';
 import SavedEvents from './SavedEvents';
 import HomePage from './HomePage';
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyBs3eAymhwEl1dKlALubuxwS69ZkdSf5_g";
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -92,25 +92,11 @@ function App() {
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(event.title) + '&dates=' + date + 'T' + startTime + 'Z/' + date + 'T' + endTime + 'Z&location=' + encodeURIComponent(location) + '&details=' + encodeURIComponent(details);
   };
 
-  if (showAuth) {
-    return (
-      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} onLoad={() => setMapsLoaded(true)}>
-        <div>
-          <div className="header">
-            <h1 onClick={() => setShowAuth(false)} style={{ cursor: 'pointer' }}>Varoom</h1>
-            <button onClick={() => setShowAuth(false)} className="header-btn">Back</button>
-          </div>
-          <Auth />
-        </div>
-      </LoadScript>
-    );
-  }
-
   return (
     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} onLoad={() => setMapsLoaded(true)}>
       <div>
         <div className="header">
-          <h1 onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer' }}>Varoom</h1>
+          <h1 onClick={() => { setCurrentPage('home'); setShowAuth(false); }} style={{ cursor: 'pointer' }}>Varoom</h1>
           <div className="header-right">
             <input
               type="text"
@@ -136,7 +122,14 @@ function App() {
           </div>
         </div>
 
-        {currentPage === 'home' && (
+        {showAuth && (
+          <div>
+            <button onClick={() => setShowAuth(false)} className="header-btn" style={{ margin: '1rem' }}>← Back</button>
+            <Auth />
+          </div>
+        )}
+
+        {!showAuth && currentPage === 'home' && (
           <HomePage onNavigate={(page, openMap) => {
             setCurrentPage(page);
             setMapExpanded(openMap ? true : false);
@@ -144,11 +137,11 @@ function App() {
           }} />
         )}
 
-        {currentPage === 'saved' && user && (
+        {!showAuth && currentPage === 'saved' && user && (
           <SavedEvents user={user} onUnsave={(eventId) => toggleSaveEvent(eventId)} />
         )}
 
-        {currentPage === 'events' && (
+        {!showAuth && currentPage === 'events' && (
           <div>
             <MapView
               events={filteredEvents}
