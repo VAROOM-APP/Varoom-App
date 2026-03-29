@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { LoadScript } from '@react-google-maps/api';
 import supabase from './supabaseClient';
 import './App.css';
@@ -8,6 +8,15 @@ import SavedEvents from './SavedEvents';
 import HomePage from './HomePage';
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+const LIBRARIES = ['places'];
+
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  const R = 3958.8; // miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -26,6 +35,14 @@ function App() {
   const [mapFullScreen, setMapFullScreen] = useState(false);
   const [mapsLoaded, setMapsLoaded] = useState(false);
 
+  // Location + distance filter
+  const [userLocation, setUserLocation] = useState(null);
+  const [filterLocation, setFilterLocation] = useState(null); // { lat, lng, label }
+  const [locationInput, setLocationInput] = useState('');
+  const [distanceEnabled, setDistanceEnabled] = useState(false);
+  const [distanceMiles, setDistanceMiles] = useState(50);
+  const [geocodeError, setGeocodeError] = useState('');
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -41,6 +58,18 @@ function App() {
       setEvents(data || []);
     }
     getEvents();
+
+    // Get GPS location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const loc = { lat: position.coords.latitude, lng: position.coords.longitude, label: 'My Location' };
+          setUserLocation(loc);
+          setFilterLocation(loc);
+        },
+        () => console.log('Location access denied')
+      );
+    }
   }, []);
 
   const fetchSavedEvents = async (userId) => {
@@ -67,6 +96,28 @@ function App() {
     setCurrentPage('home');
   };
 
+  const geocodeLocation = useCallback(async () => {
+    if (!locationInput.trim()) {
+      // Reset to GPS
+      if (userLocation) {
+        setFilterLocation(userLocation);
+        setGeocodeError('');
+      }
+      return;
+    }
+    if (!mapsLoaded) return;
+    setGeocodeError('');
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address: locationInput + ', UK' }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        const { lat, lng } = results[0].geometry.location;
+        setFilterLocation({ lat: lat(), lng: lng(), label: results[0].formatted_address.split(',')[0] });
+      } else {
+        setGeocodeError('Location not found');
+      }
+    });
+  }, [locationInput, mapsLoaded, userLocation]);
+
   const marques = ['all', ...new Set(events.filter(e => e.marque).map(e => e.marque))];
 
   const filteredEvents = events.filter(event => {
@@ -79,7 +130,10 @@ function App() {
       event.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.marque?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd && matchesSearch;
+    const matchesDistance = !distanceEnabled || !filterLocation || !event.latitude || !event.longitude
+      ? true
+      : haversineDistance(filterLocation.lat, filterLocation.lng, event.latitude, event.longitude) <= distanceMiles;
+    return matchesType && matchesVehicle && matchesMarque && matchesStart && matchesEnd && matchesSearch && matchesDistance;
   });
 
   const getCalendarUrl = (event) => {
@@ -93,7 +147,7 @@ function App() {
   };
 
   return (
-    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} onLoad={() => setMapsLoaded(true)}>
+    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES} onLoad={() => setMapsLoaded(true)}>
       <div>
         <div className="header">
           <h1 onClick={() => { setCurrentPage('home'); setShowAuth(false); }} style={{ cursor: 'pointer' }}>Varoom</h1>
@@ -153,6 +207,9 @@ function App() {
               setMapFullScreen={setMapFullScreen}
               getCalendarUrl={getCalendarUrl}
               mapsLoaded={mapsLoaded}
+              filterLocation={filterLocation}
+              distanceEnabled={distanceEnabled}
+              distanceMiles={distanceMiles}
             />
             <div className="filters">
               <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
@@ -171,6 +228,55 @@ function App() {
                   <option key={marque} value={marque}>{marque === 'all' ? 'All Marques' : marque}</option>
                 ))}
               </select>
+              <div className="filter-divider" />
+
+              {/* Distance filter */}
+              <div className="distance-filter">
+                <button
+                  className={distanceEnabled ? 'active' : ''}
+                  onClick={() => setDistanceEnabled(!distanceEnabled)}
+                >
+                  📍 Nearby
+                </button>
+                {distanceEnabled && (
+                  <div className="distance-controls">
+                    <div className="distance-location-row">
+                      <input
+                        type="text"
+                        className="search-input distance-input"
+                        placeholder="My Location"
+                        value={locationInput}
+                        onChange={e => setLocationInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && geocodeLocation()}
+                      />
+                      <button className="distance-go-btn" onClick={geocodeLocation}>Go</button>
+                      {userLocation && (
+                        <button className="distance-gps-btn" onClick={() => {
+                          setLocationInput('');
+                          setFilterLocation(userLocation);
+                          setGeocodeError('');
+                        }}>📍 GPS</button>
+                      )}
+                    </div>
+                    {geocodeError && <span className="geocode-error">{geocodeError}</span>}
+                    <div className="distance-slider-row">
+                      <span className="distance-label">
+                        {filterLocation?.label || 'My Location'} · {distanceMiles} mi
+                      </span>
+                      <input
+                        type="range"
+                        min="5"
+                        max="150"
+                        step="5"
+                        value={distanceMiles}
+                        onChange={e => setDistanceMiles(Number(e.target.value))}
+                        className="distance-slider"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="date-filters">
                 <input
                   type="date"

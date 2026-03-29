@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker, Circle } from '@react-google-maps/api';
 
 const defaultCenter = { lat: 51.5074, lng: -0.1278 };
 
@@ -12,7 +12,9 @@ const getMarkerIcon = (eventType) => {
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
 };
 
-function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapExpanded, mapFullScreen, setMapFullScreen, getCalendarUrl, mapsLoaded }) {
+const MILES_TO_METRES = 1609.34;
+
+function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapExpanded, mapFullScreen, setMapFullScreen, getCalendarUrl, mapsLoaded, filterLocation, distanceEnabled, distanceMiles }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
@@ -29,6 +31,10 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
   }, []);
 
   const mapHeightPx = mapFullScreen ? windowHeight : Math.floor(windowHeight * 0.5);
+
+  const circleCenter = filterLocation
+    ? { lat: filterLocation.lat, lng: filterLocation.lng }
+    : userLocation;
 
   return (
     <div>
@@ -68,7 +74,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
             </button>
             <GoogleMap
               mapContainerStyle={{ width: '100%', height: mapHeightPx + 'px' }}
-              center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : userLocation}
+              center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : circleCenter}
               zoom={selectedEvent ? 13 : 10}
               mapTypeId="satellite"
             >
@@ -81,6 +87,19 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
                   onClick={() => setSelectedEvent(event)}
                 />
               ))}
+              {mapsLoaded && distanceEnabled && circleCenter && (
+                <Circle
+                  center={circleCenter}
+                  radius={distanceMiles * MILES_TO_METRES}
+                  options={{
+                    strokeColor: '#e63946',
+                    strokeOpacity: 0.9,
+                    strokeWeight: 2,
+                    fillColor: '#e63946',
+                    fillOpacity: 0.1,
+                  }}
+                />
+              )}
             </GoogleMap>
           </div>
         </div>
