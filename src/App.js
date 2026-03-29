@@ -40,7 +40,7 @@ function App() {
   const [filterLocation, setFilterLocation] = useState(null); // { lat, lng, label }
   const [locationInput, setLocationInput] = useState('');
   const [distanceEnabled, setDistanceEnabled] = useState(false);
-  const [distanceMiles, setDistanceMiles] = useState(50);
+  const [distanceMiles, setDistanceMiles] = useState(15);
   const [geocodeError, setGeocodeError] = useState('');
 
   useEffect(() => {
