@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 
 const defaultCenter = { lat: 51.5074, lng: -0.1278 };
 
@@ -12,9 +12,8 @@ const getMarkerIcon = (eventType) => {
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
 };
 
-function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapExpanded, mapFullScreen, setMapFullScreen, getCalendarUrl }) {
+function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapExpanded, mapFullScreen, setMapFullScreen, getCalendarUrl, mapsLoaded }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
@@ -33,9 +32,16 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
 
   return (
     <div>
-      <button className={mapExpanded ? 'map-toggle-btn open' : 'map-toggle-btn'} onClick={() => { setMapExpanded(!mapExpanded); if (mapFullScreen) setMapFullScreen(false); }}>
+      <button
+        className={mapExpanded ? 'map-toggle-btn open' : 'map-toggle-btn'}
+        onClick={() => {
+          setMapExpanded(!mapExpanded);
+          if (mapFullScreen) setMapFullScreen(false);
+        }}
+      >
         {mapExpanded ? '▲ Hide Map' : '▼ See Map'}
       </button>
+
       {mapExpanded && (
         <div style={{ width: '100%', height: mapHeightPx + 'px', display: 'flex', position: 'relative' }}>
           {selectedEvent && (
@@ -48,6 +54,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
                 <p>🕐 {selectedEvent.start_time}</p>
                 <p>📍 {selectedEvent.location_name}</p>
                 <p>🚗 {selectedEvent.vehicle_type}</p>
+                {selectedEvent.is_recurring && <p>🔄 {selectedEvent.recurrence}</p>}
               </div>
               {selectedEvent.description && <p className="sidebar-description">{selectedEvent.description}</p>}
               <a href={'https://www.google.com/maps/dir/?api=1&destination=' + selectedEvent.latitude + ',' + selectedEvent.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
@@ -59,13 +66,22 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
             <button className="fullscreen-btn" onClick={() => setMapFullScreen(!mapFullScreen)}>
               {mapFullScreen ? '⤡ Exit Full Screen' : '⤢ Full Screen'}
             </button>
-            <LoadScript googleMapsApiKey="AIzaSyBs3eAymhwEl1dKlALubuxwS69ZkdSf5_g" onLoad={() => setMapLoaded(true)} onError={() => console.log('Maps failed to load')}>
-              <GoogleMap mapContainerStyle={{ width: '100%', height: mapHeightPx + 'px' }} center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : userLocation} zoom={selectedEvent ? 13 : 10} mapTypeId="satellite">
-                {mapLoaded && events.map(event => (
-                  <Marker key={event.id} position={{ lat: event.latitude, lng: event.longitude }} title={event.title} icon={{ url: getMarkerIcon(event.event_type), scaledSize: new window.google.maps.Size(40, 50), anchor: new window.google.maps.Point(20, 50) }} onClick={() => setSelectedEvent(event)} />
-                ))}
-              </GoogleMap>
-            </LoadScript>
+            <GoogleMap
+              mapContainerStyle={{ width: '100%', height: mapHeightPx + 'px' }}
+              center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : userLocation}
+              zoom={selectedEvent ? 13 : 10}
+              mapTypeId="satellite"
+            >
+              {mapsLoaded && events.map(event => (
+                <Marker
+                  key={event.id}
+                  position={{ lat: event.latitude, lng: event.longitude }}
+                  title={event.title}
+                  icon={{ url: getMarkerIcon(event.event_type), scaledSize: new window.google.maps.Size(40, 50), anchor: new window.google.maps.Point(20, 50) }}
+                  onClick={() => setSelectedEvent(event)}
+                />
+              ))}
+            </GoogleMap>
           </div>
         </div>
       )}

@@ -639,3 +639,7 @@ body {
   flex-direction: column;
   gap: 8px;
 }
+
+.event-type.recurring {
+  background-color: #2a9d8f;
+}
