@@ -216,25 +216,6 @@ body {
   align-items: center;
 }
 
-.filters button {
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.filters button.active {
-  background-color: #e63946;
-  color: white;
-}
-
-.filters button:hover {
-  background-color: #e63946;
-}
-
 .filter-divider {
   width: 2px;
   height: 24px;
@@ -258,7 +239,12 @@ body {
   font-size: 14px;
 }
 
-.marque-select {
+/* Filter dropdowns */
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-pill {
   background-color: #2a2a2a;
   color: #ffffff;
   border: none;
@@ -266,6 +252,146 @@ body {
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.filter-pill.active {
+  background-color: #e63946;
+  color: white;
+}
+
+.filter-pill:hover {
+  background-color: #e63946;
+}
+
+.filter-pill-arrow {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.filter-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 100;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+
+.filter-dropdown-item {
+  background: none;
+  border: none;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.filter-dropdown-item:hover {
+  background-color: #2a2a2a;
+}
+
+.filter-dropdown-item.active {
+  background-color: #e63946;
+  color: white;
+}
+
+/* Distance filter */
+.distance-filter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.distance-dropdown-menu {
+  min-width: 280px;
+  gap: 10px;
+}
+
+.distance-location-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.distance-input {
+  width: 140px;
+}
+
+.distance-go-btn,
+.distance-gps-btn {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.distance-go-btn:hover,
+.distance-gps-btn:hover {
+  background-color: #e63946;
+}
+
+.distance-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.distance-label {
+  font-size: 13px;
+  color: #aaaaaa;
+}
+
+.distance-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #333333;
+  outline: none;
+  cursor: pointer;
+}
+
+.distance-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e63946;
+  cursor: pointer;
+}
+
+.distance-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e63946;
+  cursor: pointer;
+  border: none;
+}
+
+.geocode-error {
+  color: #e63946;
+  font-size: 13px;
 }
 
 .events-list {
@@ -611,6 +737,7 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
+
 .calendar-btn {
   background-color: #2a2a2a;
   margin-bottom: 8px;
@@ -619,6 +746,7 @@ body {
 .calendar-btn:hover {
   background-color: #333333;
 }
+
 .event-detail-panel {
   background-color: #1a1a1a;
   border-left: 4px solid #e63946;
@@ -642,90 +770,4 @@ body {
 
 .event-type.recurring {
   background-color: #2a9d8f;
-}
-
-/* Distance filter */
-.distance-filter {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.distance-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.distance-location-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.distance-input {
-  width: 160px;
-}
-
-.distance-go-btn,
-.distance-gps-btn {
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.distance-go-btn:hover,
-.distance-gps-btn:hover {
-  background-color: #e63946;
-}
-
-.distance-slider-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.distance-label {
-  font-size: 13px;
-  color: #aaaaaa;
-}
-
-.distance-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 200px;
-  height: 4px;
-  border-radius: 2px;
-  background: #333333;
-  outline: none;
-  cursor: pointer;
-}
-
-.distance-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #e63946;
-  cursor: pointer;
-}
-
-.distance-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #e63946;
-  cursor: pointer;
-  border: none;
-}
-
-.geocode-error {
-  color: #e63946;
-  font-size: 13px;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { LoadScript } from '@react-google-maps/api';
 import supabase from './supabaseClient';
 import './App.css';
@@ -11,11 +11,47 @@ const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const LIBRARIES = ['places'];
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
-  const R = 3958.8; // miles
+  const R = 3958.8;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function FilterDropdown({ label, options, value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selected = options.find(o => o.value === value);
+
+  return (
+    <div className="filter-dropdown" ref={ref}>
+      <button className={`filter-pill ${value !== options[0].value ? 'active' : ''}`} onClick={() => setOpen(!open)}>
+        {selected?.label || label} <span className="filter-pill-arrow">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className="filter-dropdown-menu">
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              className={`filter-dropdown-item ${value === opt.value ? 'active' : ''}`}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function App() {
@@ -34,10 +70,8 @@ function App() {
   const [mapExpanded, setMapExpanded] = useState(false);
   const [mapFullScreen, setMapFullScreen] = useState(false);
   const [mapsLoaded, setMapsLoaded] = useState(false);
-
-  // Location + distance filter
   const [userLocation, setUserLocation] = useState(null);
-  const [filterLocation, setFilterLocation] = useState(null); // { lat, lng, label }
+  const [filterLocation, setFilterLocation] = useState(null);
   const [locationInput, setLocationInput] = useState('');
   const [distanceEnabled, setDistanceEnabled] = useState(false);
   const [distanceMiles, setDistanceMiles] = useState(15);
@@ -58,8 +92,6 @@ function App() {
       setEvents(data || []);
     }
     getEvents();
-
-    // Get GPS location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
@@ -98,11 +130,7 @@ function App() {
 
   const geocodeLocation = useCallback(async () => {
     if (!locationInput.trim()) {
-      // Reset to GPS
-      if (userLocation) {
-        setFilterLocation(userLocation);
-        setGeocodeError('');
-      }
+      if (userLocation) { setFilterLocation(userLocation); setGeocodeError(''); }
       return;
     }
     if (!mapsLoaded) return;
@@ -165,9 +193,7 @@ function App() {
             <button onClick={() => setCurrentPage('events')} className={`header-btn ${currentPage === 'events' ? 'active' : ''}`}>Events</button>
             {user ? (
               <>
-                <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className={`header-btn ${currentPage === 'saved' ? 'active' : ''}`}>
-                  ♥ Saved
-                </button>
+                <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className={`header-btn ${currentPage === 'saved' ? 'active' : ''}`}>♥ Saved</button>
                 <button onClick={handleSignOut} className="header-btn">Sign Out</button>
               </>
             ) : (
@@ -212,34 +238,44 @@ function App() {
               distanceMiles={distanceMiles}
             />
             <div className="filters">
-              <button onClick={() => setFilterType('all')} className={filterType === 'all' ? 'active' : ''}>All</button>
-              <button onClick={() => setFilterType('meets')} className={filterType === 'meets' ? 'active' : ''}>Meets</button>
-              <button onClick={() => setFilterType('auctions')} className={filterType === 'auctions' ? 'active' : ''}>Auctions</button>
-              <button onClick={() => setFilterType('races')} className={filterType === 'races' ? 'active' : ''}>Races</button>
-              <button onClick={() => setFilterType('autojumbles')} className={filterType === 'autojumbles' ? 'active' : ''}>Autojumbles</button>
+              <FilterDropdown
+                label="Event Type"
+                value={filterType}
+                onChange={setFilterType}
+                options={[
+                  { value: 'all', label: 'All Events' },
+                  { value: 'meets', label: 'Meets' },
+                  { value: 'auctions', label: 'Auctions' },
+                  { value: 'races', label: 'Races' },
+                  { value: 'autojumbles', label: 'Autojumbles' },
+                ]}
+              />
+              <FilterDropdown
+                label="Vehicle"
+                value={filterVehicle}
+                onChange={setFilterVehicle}
+                options={[
+                  { value: 'all', label: 'All Vehicles' },
+                  { value: 'car', label: 'Cars' },
+                  { value: 'motorbike', label: 'Motorbikes' },
+                ]}
+              />
+              <FilterDropdown
+                label="Marque"
+                value={filterMarque}
+                onChange={setFilterMarque}
+                options={marques.map(m => ({ value: m, label: m === 'all' ? 'All Marques' : m }))}
+              />
               <div className="filter-divider" />
-              <button onClick={() => setFilterVehicle('all')} className={filterVehicle === 'all' ? 'active' : ''}>All Vehicles</button>
-              <button onClick={() => setFilterVehicle('car')} className={filterVehicle === 'car' ? 'active' : ''}>Cars</button>
-              <button onClick={() => setFilterVehicle('motorbike')} className={filterVehicle === 'motorbike' ? 'active' : ''}>Motorbikes</button>
-              <button onClick={() => setFilterVehicle('both')} className={filterVehicle === 'both' ? 'active' : ''}>Both</button>
-              <div className="filter-divider" />
-              <select value={filterMarque} onChange={e => setFilterMarque(e.target.value)} className="marque-select">
-                {marques.map(marque => (
-                  <option key={marque} value={marque}>{marque === 'all' ? 'All Marques' : marque}</option>
-                ))}
-              </select>
-              <div className="filter-divider" />
-
-              {/* Distance filter */}
               <div className="distance-filter">
                 <button
-                  className={distanceEnabled ? 'active' : ''}
+                  className={`filter-pill ${distanceEnabled ? 'active' : ''}`}
                   onClick={() => setDistanceEnabled(!distanceEnabled)}
                 >
-                  📍 Nearby
+                  📍 Nearby {distanceEnabled ? `· ${distanceMiles}mi` : ''} <span className="filter-pill-arrow">{distanceEnabled ? '▲' : '▼'}</span>
                 </button>
                 {distanceEnabled && (
-                  <div className="distance-controls">
+                  <div className="filter-dropdown-menu distance-dropdown-menu">
                     <div className="distance-location-row">
                       <input
                         type="text"
@@ -276,7 +312,6 @@ function App() {
                   </div>
                 )}
               </div>
-
               <div className="date-filters">
                 <input
                   type="date"
@@ -290,6 +325,7 @@ function App() {
                 <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
               </div>
             </div>
+
             <div className="events-list">
               {filteredEvents.length === 0 ? (
                 <p>No events found</p>
@@ -306,10 +342,7 @@ function App() {
                       <div className="event-card-header">
                         <h2>{event.title}</h2>
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleSaveEvent(event.id);
-                          }}
+                          onClick={(e) => { e.stopPropagation(); toggleSaveEvent(event.id); }}
                           className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
                         >
                           {savedEvents.includes(event.id) ? '♥' : '♡'}
