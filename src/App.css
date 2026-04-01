@@ -961,3 +961,30 @@ body {
   gap: 8px;
   margin-top: 4px;
 }
+
+@media (max-width: 768px) {
+  .event-detail-panel {
+    margin-top: -12px;
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0 0 12px 12px;
+    padding: 16px;
+  }
+
+  .event-detail-actions {
+    flex-direction: column;
+  }
+
+  .event-detail-actions .sidebar-link {
+    text-align: center;
+    margin-top: 0;
+  }
+
+  .sidebar-meta p {
+    font-size: 13px;
+  }
+
+  .sidebar-description {
+    font-size: 13px;
+  }
+}
