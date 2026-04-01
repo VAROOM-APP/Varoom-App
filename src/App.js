@@ -237,6 +237,7 @@ function App() {
               distanceEnabled={distanceEnabled}
               distanceMiles={distanceMiles}
             />
+
             <div className="filters">
               <FilterDropdown
                 label="Event Type"
@@ -335,8 +336,9 @@ function App() {
                     <div
                       className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
                       onClick={() => {
-                        setSelectedEvent(selectedEvent?.id === event.id ? null : event);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const newSelected = selectedEvent?.id === event.id ? null : event;
+                        setSelectedEvent(newSelected);
+                        if (newSelected) window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                     >
                       <div className="event-card-header">
@@ -357,21 +359,22 @@ function App() {
                         {event.is_recurring && <span className="event-type recurring">🔄 {event.recurrence}</span>}
                       </div>
                     </div>
-                    {selectedEvent?.id === event.id && !mapExpanded && (
+
+                    {selectedEvent?.id === event.id && (
                       <div className="event-detail-panel">
                         <div className="sidebar-meta">
                           <p>📅 {event.date}</p>
                           <p>🕐 {event.start_time}</p>
-                          <p>📍 {event.location_name}</p>
+                          {event.location_name && <p>📍 {event.location_name}</p>}
                           <p>🚗 {event.vehicle_type}</p>
                           {event.marque && <p>🏎 {event.marque}</p>}
                           {event.is_recurring && <p>🔄 {event.recurrence}</p>}
                         </div>
                         {event.description && <p className="sidebar-description">{event.description}</p>}
                         <div className="event-detail-actions">
-                          <a href={'https://www.google.com/maps/dir/?api=1&destination=' + event.latitude + ',' + event.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
-                          <a href={getCalendarUrl(event)} target="_blank" rel="noreferrer" className="sidebar-link calendar-btn">📅 Add to Calendar</a>
-                          {event.external_link && <a href={event.external_link} target="_blank" rel="noreferrer" className="sidebar-link">More Info / Tickets</a>}
+                          <a href={'https://www.google.com/maps/dir/?api=1&destination=' + event.latitude + ',' + event.longitude} target="_blank" rel="noreferrer" className="sheet-action-btn directions-btn">🗺 Get Directions</a>
+                          <a href={getCalendarUrl(event)} target="_blank" rel="noreferrer" className="sheet-action-btn calendar-btn">📅 Add to Calendar</a>
+                          {event.external_link && <a href={event.external_link} target="_blank" rel="noreferrer" className="sheet-action-btn tickets-btn">🎟 More Info / Tickets</a>}
                         </div>
                       </div>
                     )}
