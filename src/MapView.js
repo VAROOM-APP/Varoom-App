@@ -31,10 +31,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
   }, []);
 
   const mapHeightPx = mapFullScreen ? windowHeight : Math.floor(windowHeight * 0.5);
-
-  const circleCenter = filterLocation
-    ? { lat: filterLocation.lat, lng: filterLocation.lng }
-    : userLocation;
+  const circleCenter = filterLocation ? { lat: filterLocation.lat, lng: filterLocation.lng } : userLocation;
 
   return (
     <div>
@@ -43,65 +40,73 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
         onClick={() => {
           setMapExpanded(!mapExpanded);
           if (mapFullScreen) setMapFullScreen(false);
+          if (mapExpanded) setSelectedEvent(null);
         }}
       >
         {mapExpanded ? '▲ Hide Map' : '▼ See Map'}
       </button>
 
       {mapExpanded && (
-        <div style={{ width: '100%', height: mapHeightPx + 'px', display: 'flex', position: 'relative' }}>
+        <div style={{ width: '100%', height: mapHeightPx + 'px', position: 'relative' }}>
+          <button className="fullscreen-btn" onClick={() => setMapFullScreen(!mapFullScreen)}>
+            {mapFullScreen ? '⤡ Exit Full Screen' : '⤢ Full Screen'}
+          </button>
+
+          <GoogleMap
+            mapContainerStyle={{ width: '100%', height: '100%' }}
+            center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : circleCenter}
+            zoom={selectedEvent ? 13 : 10}
+            mapTypeId="satellite"
+            onClick={() => setSelectedEvent(null)}
+          >
+            {mapsLoaded && events.map(event => (
+              <Marker
+                key={event.id}
+                position={{ lat: event.latitude, lng: event.longitude }}
+                title={event.title}
+                icon={{ url: getMarkerIcon(event.event_type), scaledSize: new window.google.maps.Size(40, 50), anchor: new window.google.maps.Point(20, 50) }}
+                onClick={() => setSelectedEvent(event)}
+              />
+            ))}
+            {mapsLoaded && distanceEnabled && circleCenter && (
+              <Circle
+                center={circleCenter}
+                radius={distanceMiles * MILES_TO_METRES}
+                options={{
+                  strokeColor: '#e63946',
+                  strokeOpacity: 0.9,
+                  strokeWeight: 2,
+                  fillColor: '#e63946',
+                  fillOpacity: 0.1,
+                }}
+              />
+            )}
+          </GoogleMap>
+
+          {/* Bottom sheet overlay */}
           {selectedEvent && (
-            <div className={mapFullScreen ? 'event-sidebar sidebar-overlay' : 'event-sidebar'}>
-              <button className="close-btn" onClick={() => setSelectedEvent(null)}>✕</button>
-              <span className="event-type">{selectedEvent.event_type}</span>
-              <h2>{selectedEvent.title}</h2>
-              <div className="sidebar-meta">
-                <p>📅 {selectedEvent.date}</p>
-                <p>🕐 {selectedEvent.start_time}</p>
-                <p>📍 {selectedEvent.location_name}</p>
-                <p>🚗 {selectedEvent.vehicle_type}</p>
-                {selectedEvent.is_recurring && <p>🔄 {selectedEvent.recurrence}</p>}
+            <div className="map-bottom-sheet" onClick={e => e.stopPropagation()}>
+              <div className="map-bottom-sheet-handle" />
+              <div className="map-bottom-sheet-content">
+                <button className="close-btn" onClick={() => setSelectedEvent(null)}>✕</button>
+                <span className="event-type">{selectedEvent.event_type}</span>
+                <h2>{selectedEvent.title}</h2>
+                <div className="sidebar-meta">
+                  <p>📅 {selectedEvent.date}</p>
+                  <p>🕐 {selectedEvent.start_time}</p>
+                  <p>📍 {selectedEvent.location_name}</p>
+                  <p>🚗 {selectedEvent.vehicle_type}</p>
+                  {selectedEvent.is_recurring && <p>🔄 {selectedEvent.recurrence}</p>}
+                </div>
+                {selectedEvent.description && <p className="sidebar-description">{selectedEvent.description}</p>}
+                <div className="map-bottom-sheet-actions">
+                  <a href={'https://www.google.com/maps/dir/?api=1&destination=' + selectedEvent.latitude + ',' + selectedEvent.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
+                  <a href={getCalendarUrl(selectedEvent)} target="_blank" rel="noreferrer" className="sidebar-link calendar-btn">📅 Add to Calendar</a>
+                  {selectedEvent.external_link && <a href={selectedEvent.external_link} target="_blank" rel="noreferrer" className="sidebar-link">More Info / Tickets</a>}
+                </div>
               </div>
-              {selectedEvent.description && <p className="sidebar-description">{selectedEvent.description}</p>}
-              <a href={'https://www.google.com/maps/dir/?api=1&destination=' + selectedEvent.latitude + ',' + selectedEvent.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
-              <a href={getCalendarUrl(selectedEvent)} target="_blank" rel="noreferrer" className="sidebar-link calendar-btn">📅 Add to Calendar</a>
-              {selectedEvent.external_link && <a href={selectedEvent.external_link} target="_blank" rel="noreferrer" className="sidebar-link">More Info / Tickets</a>}
             </div>
           )}
-          <div style={{ flex: 1, position: 'relative', height: mapHeightPx + 'px' }}>
-            <button className="fullscreen-btn" onClick={() => setMapFullScreen(!mapFullScreen)}>
-              {mapFullScreen ? '⤡ Exit Full Screen' : '⤢ Full Screen'}
-            </button>
-            <GoogleMap
-              mapContainerStyle={{ width: '100%', height: mapHeightPx + 'px' }}
-              center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : circleCenter}
-              zoom={selectedEvent ? 13 : 10}
-              mapTypeId="satellite"
-            >
-              {mapsLoaded && events.map(event => (
-                <Marker
-                  key={event.id}
-                  position={{ lat: event.latitude, lng: event.longitude }}
-                  title={event.title}
-                  icon={{ url: getMarkerIcon(event.event_type), scaledSize: new window.google.maps.Size(40, 50), anchor: new window.google.maps.Point(20, 50) }}
-                  onClick={() => setSelectedEvent(event)}
-                />
-              ))}
-              {mapsLoaded && distanceEnabled && circleCenter && (
-                <Circle
-                  center={circleCenter}
-                  radius={distanceMiles * MILES_TO_METRES}
-                  options={{
-                    strokeColor: '#e63946',
-                    strokeOpacity: 0.9,
-                    strokeWeight: 2,
-                    fillColor: '#e63946',
-                    fillOpacity: 0.1,
-                  }}
-                />
-              )}
-            </GoogleMap>
-          </div>
         </div>
       )}
     </div>

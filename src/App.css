@@ -908,3 +908,56 @@ body {
     grid-template-columns: 1fr;
   }
 }
+/* Fix dropdown going under map */
+.filters {
+  position: relative;
+  z-index: 200;
+}
+
+.filter-dropdown-menu {
+  z-index: 300;
+}
+
+/* Map bottom sheet */
+.map-bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #1a1a1a;
+  border-radius: 16px 16px 0 0;
+  border-top: 2px solid #e63946;
+  z-index: 50;
+  max-height: 55%;
+  overflow-y: auto;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.7);
+}
+
+.map-bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background-color: #444444;
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+.map-bottom-sheet-content {
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.map-bottom-sheet-content h2 {
+  font-size: 18px;
+  margin-top: 4px;
+  padding-right: 24px;
+}
+
+.map-bottom-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
