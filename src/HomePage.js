@@ -33,10 +33,13 @@ function HomePage({ onNavigate }) {
 
   return (
     <div className="homepage">
+
+      {/* Hero */}
       <div className="hero">
         <div className="hero-content">
-          <h2>Find Car & Bike Events Near You</h2>
-          <p>Meets, auctions, races and autojumbles all in one place</p>
+          <p className="hero-eyebrow">UK Car & Bike Events</p>
+          <h2>Find Your Next<br />Event.</h2>
+          <p className="hero-sub">Meets, auctions, races and autojumbles — all in one place.</p>
           <div className="hero-buttons">
             <button onClick={() => onNavigate('events')} className="hero-btn primary">Browse Events</button>
             <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Map View</button>
@@ -44,9 +47,13 @@ function HomePage({ onNavigate }) {
         </div>
       </div>
 
+      {/* Featured */}
       {featured.length > 0 && (
         <div className="homepage-section">
-          <h3>Featured Auctions</h3>
+          <div className="section-header">
+            <h3>Featured</h3>
+            <span className="section-line" />
+          </div>
           <div className="featured-grid">
             {featured.map(item => (
               <a key={item.id} href={item.link} target="_blank" rel="noreferrer" className="featured-card">
@@ -67,12 +74,16 @@ function HomePage({ onNavigate }) {
         </div>
       )}
 
+      {/* Recent Events */}
       {recentEvents.length > 0 && (
         <div className="homepage-section">
-          <h3>Recently Added Events</h3>
+          <div className="section-header">
+            <h3>Recently Added</h3>
+            <span className="section-line" />
+          </div>
           <div className="recent-events">
             {recentEvents.map(event => (
-              <div key={event.id} className="recent-event-card" onClick={() => onNavigate('events')}>
+              <div key={event.id} className="recent-event-card stitch-card" onClick={() => onNavigate('events')}>
                 <div className="recent-event-header">
                   <h4>{event.title}</h4>
                   {event.event_type && <span className="event-type">{event.event_type}</span>}
@@ -87,9 +98,13 @@ function HomePage({ onNavigate }) {
         </div>
       )}
 
+      {/* News */}
       {news.length > 0 && (
         <div className="homepage-section">
-          <h3>Latest News</h3>
+          <div className="section-header">
+            <h3>Latest News</h3>
+            <span className="section-line" />
+          </div>
           <div className="news-grid">
             {news.map(post => (
               <div key={post.id} className="news-card">
@@ -103,6 +118,7 @@ function HomePage({ onNavigate }) {
           </div>
         </div>
       )}
+
     </div>
   );
 }

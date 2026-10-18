@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GoogleMap, Marker, Circle } from '@react-google-maps/api';
 
-const defaultCenter = { lat: 51.5074, lng: -0.1278 };
+const defaultCenter = { lat: 52.5, lng: -1.5 }; // Centre of England
 
 const getMarkerIcon = (eventType, isSelected) => {
   const colors = { meets: '#e63946', auctions: '#f4a261', races: '#2a9d8f', autojumbles: '#457b9d', default: '#888888' };
@@ -31,7 +31,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const mapHeightPx = mapFullScreen ? windowHeight : Math.floor(windowHeight * 0.6);
+  const mapHeightPx = mapFullScreen ? windowHeight : Math.floor(windowHeight * 0.55);
   const circleCenter = filterLocation ? { lat: filterLocation.lat, lng: filterLocation.lng } : userLocation;
 
   return (
@@ -50,20 +50,21 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
       {mapExpanded && (
         <div style={{ width: '100%', height: mapHeightPx + 'px', position: 'relative' }}>
           <button className="fullscreen-btn" onClick={() => setMapFullScreen(!mapFullScreen)}>
-            {mapFullScreen ? '⤡ Exit Full Screen' : '⤢ Full Screen'}
+            {mapFullScreen ? '⤡ Exit' : '⤢ Full Screen'}
           </button>
 
           <GoogleMap
             mapContainerStyle={{ width: '100%', height: '100%' }}
             center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : circleCenter}
-            zoom={selectedEvent ? 13 : 10}
+            zoom={selectedEvent ? 13 : 7}
             mapTypeId="satellite"
             onClick={() => setSelectedEvent(null)}
             options={{
-              zoomControl: false,
+              zoomControl: true,
               mapTypeControl: false,
               streetViewControl: false,
               fullscreenControl: false,
+              zoomControlOptions: { position: 9 },
             }}
           >
             {mapsLoaded && events.map(event => (
@@ -92,7 +93,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
                   strokeOpacity: 0.9,
                   strokeWeight: 2,
                   fillColor: '#e63946',
-                  fillOpacity: 0.1,
+                  fillOpacity: 0.08,
                 }}
               />
             )}
@@ -103,20 +104,21 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
               <div className="map-bottom-sheet-handle" onClick={() => setSelectedEvent(null)} />
               <div className="map-bottom-sheet-content">
                 <button className="close-btn" onClick={() => setSelectedEvent(null)}>✕</button>
-                <span className="event-type">{selectedEvent.event_type}</span>
-                <h2>{selectedEvent.title}</h2>
-                <div className="sidebar-meta">
-                  <p>📅 {selectedEvent.date}</p>
-                  <p>🕐 {selectedEvent.start_time}</p>
-                  {selectedEvent.location_name && <p>📍 {selectedEvent.location_name}</p>}
-                  <p>🚗 {selectedEvent.vehicle_type}</p>
-                  {selectedEvent.is_recurring && <p>🔄 {selectedEvent.recurrence}</p>}
+                <div className="sheet-event-type-row">
+                  <span className="event-type">{selectedEvent.event_type}</span>
+                  {selectedEvent.marque && <span className="event-type">{selectedEvent.marque}</span>}
+                </div>
+                <h2 className="sheet-title">{selectedEvent.title}</h2>
+                <div className="sheet-meta">
+                  <span>📅 {selectedEvent.date}</span>
+                  {selectedEvent.start_time && <span>🕐 {selectedEvent.start_time}</span>}
+                  {selectedEvent.location_name && <span>📍 {selectedEvent.location_name}</span>}
                 </div>
                 {selectedEvent.description && <p className="sidebar-description">{selectedEvent.description}</p>}
-                <div className="map-bottom-sheet-actions">
-                  <a href={'https://www.google.com/maps/dir/?api=1&destination=' + selectedEvent.latitude + ',' + selectedEvent.longitude} target="_blank" rel="noreferrer" className="sheet-action-btn directions-btn">🗺 Get Directions</a>
-                  <a href={getCalendarUrl(selectedEvent)} target="_blank" rel="noreferrer" className="sheet-action-btn calendar-btn">📅 Add to Calendar</a>
-                  {selectedEvent.external_link && <a href={selectedEvent.external_link} target="_blank" rel="noreferrer" className="sheet-action-btn tickets-btn">🎟 More Info / Tickets</a>}
+                <div className="sheet-actions">
+                  <a href={'https://www.google.com/maps/dir/?api=1&destination=' + selectedEvent.latitude + ',' + selectedEvent.longitude} target="_blank" rel="noreferrer" className="sheet-action-btn directions-btn">🗺 Directions</a>
+                  <a href={getCalendarUrl(selectedEvent)} target="_blank" rel="noreferrer" className="sheet-action-btn calendar-btn">📅 Calendar</a>
+                  {selectedEvent.external_link && <a href={selectedEvent.external_link} target="_blank" rel="noreferrer" className="sheet-action-btn tickets-btn">🎟 Tickets</a>}
                 </div>
               </div>
             </div>
