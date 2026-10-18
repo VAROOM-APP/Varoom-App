@@ -203,27 +203,21 @@ body {
   border: 1px solid #333333;
 }
 
-.sheet-action-btn.directions-btn:hover {
-  border-color: #e63946;
-}
+.sheet-action-btn.directions-btn:hover { border-color: #e63946; }
 
 .sheet-action-btn.calendar-btn {
   background-color: #1a1a1a;
   border: 1px solid #333333;
 }
 
-.sheet-action-btn.calendar-btn:hover {
-  border-color: #e63946;
-}
+.sheet-action-btn.calendar-btn:hover { border-color: #e63946; }
 
 .sheet-action-btn.tickets-btn {
   background-color: #e63946;
   border: 1px solid #e63946;
 }
 
-.sheet-action-btn.tickets-btn:hover {
-  background-color: #c1121f;
-}
+.sheet-action-btn.tickets-btn:hover { background-color: #c1121f; }
 
 .close-btn {
   position: absolute;
@@ -236,9 +230,7 @@ body {
   cursor: pointer;
 }
 
-.close-btn:hover {
-  color: #ffffff;
-}
+.close-btn:hover { color: #ffffff; }
 
 /* ─── Filters ─────────────────────────────────────────────── */
 .filters {
@@ -276,9 +268,7 @@ body {
   font-size: 13px;
 }
 
-.filter-dropdown {
-  position: relative;
-}
+.filter-dropdown { position: relative; }
 
 .filter-pill {
   background-color: #1a1a1a;
@@ -368,9 +358,7 @@ body {
   align-items: center;
 }
 
-.distance-input {
-  width: 140px;
-}
+.distance-input { width: 140px; }
 
 .distance-go-btn,
 .distance-gps-btn {
@@ -443,7 +431,7 @@ body {
   margin: 0 auto;
 }
 
-/* Double-track leather stitching */
+/* Double dashed stitch — becomes solid double line when selected */
 .event-card {
   position: relative;
   background-color: #141414;
@@ -451,11 +439,14 @@ body {
   padding: 18px 20px;
   margin-bottom: 10px;
   cursor: pointer;
+  /* Outer solid border */
   border: 1px solid #1e1e1e;
-  outline: 1px dashed rgba(230, 57, 70, 0.45);
+  /* Inner dashed stitch track 1 */
+  outline: 1px dashed rgba(230, 57, 70, 0.5);
   outline-offset: -4px;
+  /* Inner dashed stitch track 2 via box-shadow */
   box-shadow: inset 0 0 0 7px #141414, inset 0 0 0 8px rgba(230, 57, 70, 0.2);
-  transition: outline-color 0.2s, box-shadow 0.2s;
+  transition: outline-color 0.2s, box-shadow 0.2s, outline-style 0.15s;
 }
 
 .event-card:hover {
@@ -463,10 +454,13 @@ body {
   box-shadow: inset 0 0 0 7px #141414, inset 0 0 0 8px rgba(230, 57, 70, 0.45);
 }
 
+/* Selected: dashed → solid double line */
 .event-card.selected {
-  border-color: #2a2a2a;
-  outline-color: rgba(255, 255, 255, 0.35);
-  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px rgba(230, 57, 70, 0.55);
+  border-color: #e63946;
+  outline-style: solid;
+  outline-color: rgba(230, 57, 70, 0.4);
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px #e63946;
   background-color: #1a1010;
   border-radius: 10px 10px 0 0;
 }
@@ -505,9 +499,7 @@ body {
   letter-spacing: 0.5px;
 }
 
-.event-type.recurring {
-  background-color: #2a9d8f;
-}
+.event-type.recurring { background-color: #2a9d8f; }
 
 .save-btn {
   background: none;
@@ -520,13 +512,11 @@ body {
   flex-shrink: 0;
 }
 
-.save-btn.saved {
-  color: #e63946;
-}
+.save-btn.saved { color: #e63946; }
 
 .event-detail-panel {
   background-color: #1a1010;
-  border: 1px solid #2a2a2a;
+  border: 1px solid #e63946;
   border-top: none;
   border-radius: 0 0 10px 10px;
   padding: 16px 20px 20px;
@@ -534,9 +524,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  outline: 1px dashed rgba(230, 57, 70, 0.3);
-  outline-offset: -4px;
-  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px rgba(230, 57, 70, 0.15);
+  /* Solid double line to match selected card */
+  outline: 1px solid rgba(230, 57, 70, 0.35);
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px rgba(230, 57, 70, 0.25);
 }
 
 .event-detail-actions {
@@ -578,18 +569,14 @@ body {
   border: 1px solid #2a2a2a;
 }
 
-.directions-btn:hover {
-  border-color: #e63946;
-}
+.directions-btn:hover { border-color: #e63946; }
 
 .calendar-btn {
   background-color: #1a1a1a;
   border: 1px solid #2a2a2a;
 }
 
-.calendar-btn:hover {
-  border-color: #e63946;
-}
+.calendar-btn:hover { border-color: #e63946; }
 
 /* ─── Auth ─────────────────────────────────────────────────── */
 .auth-container {
@@ -620,9 +607,7 @@ body {
   font-size: 15px;
 }
 
-.auth-input::placeholder {
-  color: #555555;
-}
+.auth-input::placeholder { color: #555555; }
 
 .auth-input:focus {
   outline: none;
@@ -642,19 +627,10 @@ body {
   letter-spacing: 1px;
 }
 
-.auth-button:hover {
-  background-color: #c1121f;
-}
+.auth-button:hover { background-color: #c1121f; }
 
-.auth-error {
-  color: #e63946;
-  font-size: 13px;
-}
-
-.auth-message {
-  color: #4caf50;
-  font-size: 13px;
-}
+.auth-error { color: #e63946; font-size: 13px; }
+.auth-message { color: #4caf50; font-size: 13px; }
 
 .auth-switch {
   color: #666666;
@@ -663,35 +639,32 @@ body {
   text-align: center;
 }
 
-.auth-switch:hover {
-  color: #ffffff;
-}
+.auth-switch:hover { color: #ffffff; }
 
 /* ─── Homepage ────────────────────────────────────────────── */
 .homepage {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 }
 
-.hero {
-  padding: 100px 60px 80px;
-  text-align: left;
-  border-bottom: 1px solid #1a1a1a;
+/* Hero stretches full width */
+.hero-wrapper {
+  width: 100%;
+  background: linear-gradient(105deg, #0a0a0a 45%, #1a0505 100%);
   position: relative;
   overflow: hidden;
-  background: linear-gradient(105deg, #0a0a0a 50%, #1a0505 100%);
+  border-bottom: 1px solid #1a1a1a;
 }
 
-.hero::before {
+.hero-wrapper::before {
   content: '';
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 50%;
-  background: radial-gradient(ellipse at right center, rgba(230,57,70,0.12) 0%, transparent 70%);
+  width: 55%;
+  background: radial-gradient(ellipse at right center, rgba(230,57,70,0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
-.hero::after {
+.hero-wrapper::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -699,6 +672,15 @@ body {
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, #e63946, transparent 60%);
+}
+
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 60px 80px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-eyebrow {
@@ -748,9 +730,7 @@ body {
   color: white;
 }
 
-.hero-btn.primary:hover {
-  background-color: #c1121f;
-}
+.hero-btn.primary:hover { background-color: #c1121f; }
 
 .hero-btn.secondary {
   background-color: transparent;
@@ -764,6 +744,8 @@ body {
 }
 
 .homepage-section {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 48px 60px;
   border-bottom: 1px solid #1a1a1a;
 }
@@ -796,6 +778,7 @@ body {
   gap: 20px;
 }
 
+/* Featured card — clean normally, double stitch on hover */
 .featured-card {
   background-color: #111111;
   border-radius: 6px;
@@ -803,11 +786,17 @@ body {
   text-decoration: none;
   color: white;
   border: 1px solid #1e1e1e;
-  transition: border-color 0.2s;
+  outline: 1px solid transparent;
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 7px #111111, inset 0 0 0 8px transparent;
+  transition: border-color 0.2s, outline-color 0.2s, box-shadow 0.2s;
 }
 
 .featured-card:hover {
   border-color: #e63946;
+  outline: 1px dashed rgba(230, 57, 70, 0.5);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 7px #111111, inset 0 0 0 8px rgba(230, 57, 70, 0.25);
 }
 
 .featured-placeholder {
@@ -825,9 +814,7 @@ body {
   object-fit: cover;
 }
 
-.featured-content {
-  padding: 20px;
-}
+.featured-content { padding: 20px; }
 
 .featured-tag {
   background-color: #e63946;
@@ -866,6 +853,7 @@ body {
   gap: 8px;
 }
 
+/* Recent event cards — same dashed stitch as event cards */
 .recent-event-card {
   background-color: #111111;
   border-radius: 6px;
@@ -915,9 +903,7 @@ body {
   object-fit: cover;
 }
 
-.news-content {
-  padding: 20px;
-}
+.news-content { padding: 20px; }
 
 .news-content h4 {
   font-size: 15px;
@@ -943,9 +929,7 @@ body {
     letter-spacing: 3px;
   }
 
-  .header-search {
-    display: none;
-  }
+  .header-search { display: none; }
 
   .header-btn {
     padding: 7px 12px;
@@ -962,13 +946,9 @@ body {
     scrollbar-width: none;
   }
 
-  .filters::-webkit-scrollbar {
-    display: none;
-  }
+  .filters::-webkit-scrollbar { display: none; }
 
-  .filter-divider {
-    display: none;
-  }
+  .filter-divider { display: none; }
 
   .date-filters {
     margin-left: 0;
@@ -992,13 +972,8 @@ body {
     min-width: 160px;
   }
 
-  .distance-dropdown-menu {
-    min-width: 260px;
-  }
-
-  .distance-input {
-    width: 110px;
-  }
+  .distance-dropdown-menu { min-width: 260px; }
+  .distance-input { width: 110px; }
 
   .events-list {
     padding: 14px 16px;
@@ -1009,9 +984,7 @@ body {
     margin-bottom: 8px;
   }
 
-  .event-card h2 {
-    font-size: 14px;
-  }
+  .event-card h2 { font-size: 14px; }
 
   .event-meta {
     font-size: 12px;
@@ -1022,17 +995,11 @@ body {
     padding: 14px 16px 18px;
   }
 
-  .event-detail-actions {
-    flex-direction: column;
-  }
+  .event-detail-actions { flex-direction: column; }
 
-  .map-bottom-sheet {
-    max-height: 55%;
-  }
+  .map-bottom-sheet { max-height: 55%; }
 
-  .sheet-actions {
-    flex-direction: column;
-  }
+  .sheet-actions { flex-direction: column; }
 
   .sheet-action-btn {
     flex: none;
@@ -1043,13 +1010,9 @@ body {
     padding: 48px 20px 40px;
   }
 
-  .hero-sub {
-    font-size: 14px;
-  }
+  .hero-sub { font-size: 14px; }
 
-  .hero-buttons {
-    flex-direction: column;
-  }
+  .hero-buttons { flex-direction: column; }
 
   .hero-btn {
     width: 100%;
@@ -1066,7 +1029,5 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .section-header h3 {
-    font-size: 10px;
-  }
+  .section-header h3 { font-size: 10px; }
 }

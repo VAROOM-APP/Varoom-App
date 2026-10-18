@@ -33,14 +33,17 @@ function HomePage({ onNavigate }) {
 
   return (
     <div className="homepage">
-      <div className="hero">
-        <div className="hero-content">
-          <p className="hero-eyebrow">UK Car & Bike Events</p>
-          <h2>Find Your Next<br />Event.</h2>
-          <p className="hero-sub">Meets, auctions, races and autojumbles — all in one place.</p>
-          <div className="hero-buttons">
-            <button onClick={() => onNavigate('events')} className="hero-btn primary">Browse Events</button>
-            <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Explore the Map</button>
+
+      <div className="hero-wrapper">
+        <div className="hero">
+          <div className="hero-content">
+            <p className="hero-eyebrow">UK Car & Bike Events</p>
+            <h2>Find Your Next<br />Event.</h2>
+            <p className="hero-sub">Meets, auctions, races and autojumbles — all in one place.</p>
+            <div className="hero-buttons">
+              <button onClick={() => onNavigate('events')} className="hero-btn primary">Browse Events</button>
+              <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Explore the Map</button>
+            </div>
           </div>
         </div>
       </div>
@@ -113,6 +116,7 @@ function HomePage({ onNavigate }) {
           </div>
         </div>
       )}
+
     </div>
   );
 }
