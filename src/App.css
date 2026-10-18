@@ -82,10 +82,10 @@ body {
   border: none;
   border-bottom: 1px solid #222222;
   padding: 10px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   transition: background-color 0.2s;
 }
@@ -107,9 +107,9 @@ body {
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
@@ -118,7 +118,6 @@ body {
   border-color: #e63946;
 }
 
-/* Map bottom sheet */
 .map-bottom-sheet {
   position: absolute;
   bottom: 0;
@@ -192,10 +191,11 @@ body {
   padding: 10px 12px;
   border-radius: 4px;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: white;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .sheet-action-btn.directions-btn {
@@ -204,7 +204,7 @@ body {
 }
 
 .sheet-action-btn.directions-btn:hover {
-  background-color: #222222;
+  border-color: #e63946;
 }
 
 .sheet-action-btn.calendar-btn {
@@ -213,7 +213,7 @@ body {
 }
 
 .sheet-action-btn.calendar-btn:hover {
-  background-color: #222222;
+  border-color: #e63946;
 }
 
 .sheet-action-btn.tickets-btn {
@@ -287,12 +287,14 @@ body {
   padding: 7px 14px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .filter-pill.active {
@@ -441,50 +443,30 @@ body {
   margin: 0 auto;
 }
 
-/* Stitching effect */
-.stitch-card {
+/* Double-track leather stitching */
+.event-card {
   position: relative;
   background-color: #141414;
   border-radius: 10px;
   padding: 18px 20px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   cursor: pointer;
-  border: 2px solid #1e1e1e;
-  outline: 2px dashed #e63946;
-  outline-offset: -6px;
-  transition: outline-color 0.2s, border-color 0.2s;
-}
-
-.stitch-card:hover {
-  border-color: #2a2a2a;
-  outline-color: #ff6b75;
-}
-
-.stitch-card.selected {
-  border-color: #e63946;
-  outline-color: #ffffff;
-  background-color: #1a1010;
-}
-
-.event-card {
-  background-color: #141414;
-  border-radius: 10px;
-  padding: 18px 20px;
-  margin-bottom: 12px;
-  border: 2px solid #1e1e1e;
-  outline: 2px dashed #e63946;
-  outline-offset: -6px;
-  cursor: pointer;
-  transition: outline-color 0.2s;
+  border: 1px solid #1e1e1e;
+  outline: 1px dashed rgba(230, 57, 70, 0.45);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 7px #141414, inset 0 0 0 8px rgba(230, 57, 70, 0.2);
+  transition: outline-color 0.2s, box-shadow 0.2s;
 }
 
 .event-card:hover {
-  outline-color: #ff6b75;
+  outline-color: rgba(230, 57, 70, 0.75);
+  box-shadow: inset 0 0 0 7px #141414, inset 0 0 0 8px rgba(230, 57, 70, 0.45);
 }
 
 .event-card.selected {
-  border-color: #e63946;
-  outline-color: #ffffff;
+  border-color: #2a2a2a;
+  outline-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px rgba(230, 57, 70, 0.55);
   background-color: #1a1010;
   border-radius: 10px 10px 0 0;
 }
@@ -518,7 +500,7 @@ body {
   padding: 2px 10px;
   border-radius: 3px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -542,19 +524,19 @@ body {
   color: #e63946;
 }
 
-/* Event detail panel (list view) */
 .event-detail-panel {
   background-color: #1a1010;
-  border: 2px solid #e63946;
+  border: 1px solid #2a2a2a;
   border-top: none;
   border-radius: 0 0 10px 10px;
   padding: 16px 20px 20px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  outline: 2px dashed rgba(230,57,70,0.3);
-  outline-offset: -6px;
+  outline: 1px dashed rgba(230, 57, 70, 0.3);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 7px #1a1010, inset 0 0 0 8px rgba(230, 57, 70, 0.15);
 }
 
 .event-detail-actions {
@@ -583,17 +565,17 @@ body {
   padding: 10px 16px;
   border-radius: 4px;
   text-align: center;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: white;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  flex: 1;
 }
 
 .directions-btn {
   background-color: #1a1a1a;
-  border: 1px solid #333333;
-  flex: 1;
+  border: 1px solid #2a2a2a;
 }
 
 .directions-btn:hover {
@@ -602,8 +584,7 @@ body {
 
 .calendar-btn {
   background-color: #1a1a1a;
-  border: 1px solid #333333;
-  flex: 1;
+  border: 1px solid #2a2a2a;
 }
 
 .calendar-btn:hover {
@@ -654,7 +635,7 @@ body {
   border: none;
   padding: 12px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   font-weight: 700;
   text-transform: uppercase;
@@ -693,11 +674,21 @@ body {
 }
 
 .hero {
-  padding: 80px 40px 60px;
+  padding: 100px 60px 80px;
   text-align: left;
   border-bottom: 1px solid #1a1a1a;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(105deg, #0a0a0a 50%, #1a0505 100%);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 50%;
+  background: radial-gradient(ellipse at right center, rgba(230,57,70,0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .hero::after {
@@ -707,12 +698,12 @@ body {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, #e63946, transparent);
+  background: linear-gradient(90deg, #e63946, transparent 60%);
 }
 
 .hero-eyebrow {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #e63946;
@@ -720,7 +711,7 @@ body {
 }
 
 .hero-content h2 {
-  font-size: 56px;
+  font-size: clamp(32px, 5vw, 64px);
   font-weight: 900;
   color: #ffffff;
   line-height: 1.05;
@@ -746,9 +737,9 @@ body {
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
 
@@ -773,7 +764,7 @@ body {
 }
 
 .homepage-section {
-  padding: 48px 40px;
+  padding: 48px 60px;
   border-bottom: 1px solid #1a1a1a;
 }
 
@@ -789,7 +780,7 @@ body {
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #888888;
+  color: #555555;
   white-space: nowrap;
 }
 
@@ -881,14 +872,15 @@ body {
   padding: 16px 20px;
   cursor: pointer;
   border: 1px solid #1e1e1e;
-  outline: 2px dashed #e63946;
-  outline-offset: -5px;
-  transition: outline-color 0.2s;
+  outline: 1px dashed rgba(230, 57, 70, 0.45);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 7px #111111, inset 0 0 0 8px rgba(230, 57, 70, 0.18);
+  transition: outline-color 0.2s, box-shadow 0.2s;
 }
 
 .recent-event-card:hover {
-  outline-color: #ff6b75;
-  border-color: #2a2a2a;
+  outline-color: rgba(230, 57, 70, 0.75);
+  box-shadow: inset 0 0 0 7px #111111, inset 0 0 0 8px rgba(230, 57, 70, 0.4);
 }
 
 .recent-event-header {
@@ -957,7 +949,7 @@ body {
 
   .header-btn {
     padding: 7px 12px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .filters {
@@ -991,7 +983,7 @@ body {
   .filter-pill {
     flex-shrink: 0;
     padding: 7px 12px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .filter-dropdown-menu {
@@ -1014,7 +1006,7 @@ body {
 
   .event-card {
     padding: 14px 16px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .event-card h2 {
@@ -1051,11 +1043,6 @@ body {
     padding: 48px 20px 40px;
   }
 
-  .hero-content h2 {
-    font-size: 36px;
-    letter-spacing: -0.5px;
-  }
-
   .hero-sub {
     font-size: 14px;
   }
@@ -1071,7 +1058,7 @@ body {
   }
 
   .homepage-section {
-    padding: 32px 20px;
+    padding: 28px 20px;
   }
 
   .featured-grid,

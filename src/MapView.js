@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker, Circle } from '@react-google-maps/api';
 
-const defaultCenter = { lat: 52.5, lng: -1.5 }; // Centre of England
+const defaultCenter = { lat: 52.5, lng: -1.5 };
 
 const getMarkerIcon = (eventType, isSelected) => {
   const colors = { meets: '#e63946', auctions: '#f4a261', races: '#2a9d8f', autojumbles: '#457b9d', default: '#888888' };
@@ -18,6 +18,7 @@ const MILES_TO_METRES = 1609.34;
 function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapExpanded, mapFullScreen, setMapFullScreen, getCalendarUrl, mapsLoaded, filterLocation, distanceEnabled, distanceMiles }) {
   const [userLocation, setUserLocation] = useState(defaultCenter);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -26,13 +27,30 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
         () => console.log('Location access denied')
       );
     }
-    const handleResize = () => setWindowHeight(window.innerHeight);
+
+    let resizeTimer;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setWindowHeight(window.innerHeight);
+        if (mapRef.current) {
+          mapRef.current.panTo(mapRef.current.getCenter());
+        }
+      }, 300);
+    };
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimer);
+    };
   }, []);
 
   const mapHeightPx = mapFullScreen ? windowHeight : Math.floor(windowHeight * 0.55);
   const circleCenter = filterLocation ? { lat: filterLocation.lat, lng: filterLocation.lng } : userLocation;
+  const mapCenter = selectedEvent
+    ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude }
+    : circleCenter;
 
   return (
     <div>
@@ -44,7 +62,7 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
           if (mapExpanded) setSelectedEvent(null);
         }}
       >
-        {mapExpanded ? '▲ Hide Map' : '▼ See Map'}
+        {mapExpanded ? '▲ HIDE MAP' : '▼ SEE MAP'}
       </button>
 
       {mapExpanded && (
@@ -55,16 +73,18 @@ function MapView({ events, selectedEvent, setSelectedEvent, mapExpanded, setMapE
 
           <GoogleMap
             mapContainerStyle={{ width: '100%', height: '100%' }}
-            center={selectedEvent ? { lat: selectedEvent.latitude, lng: selectedEvent.longitude } : circleCenter}
+            center={mapCenter}
             zoom={selectedEvent ? 13 : 7}
             mapTypeId="satellite"
             onClick={() => setSelectedEvent(null)}
+            onLoad={map => { mapRef.current = map; }}
             options={{
               zoomControl: true,
               mapTypeControl: false,
               streetViewControl: false,
               fullscreenControl: false,
               zoomControlOptions: { position: 9 },
+              gestureHandling: 'greedy',
             }}
           >
             {mapsLoaded && events.map(event => (

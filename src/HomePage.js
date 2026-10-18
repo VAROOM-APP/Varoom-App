@@ -33,8 +33,6 @@ function HomePage({ onNavigate }) {
 
   return (
     <div className="homepage">
-
-      {/* Hero */}
       <div className="hero">
         <div className="hero-content">
           <p className="hero-eyebrow">UK Car & Bike Events</p>
@@ -42,12 +40,11 @@ function HomePage({ onNavigate }) {
           <p className="hero-sub">Meets, auctions, races and autojumbles — all in one place.</p>
           <div className="hero-buttons">
             <button onClick={() => onNavigate('events')} className="hero-btn primary">Browse Events</button>
-            <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Map View</button>
+            <button onClick={() => onNavigate('events', true)} className="hero-btn secondary">Explore the Map</button>
           </div>
         </div>
       </div>
 
-      {/* Featured */}
       {featured.length > 0 && (
         <div className="homepage-section">
           <div className="section-header">
@@ -74,7 +71,6 @@ function HomePage({ onNavigate }) {
         </div>
       )}
 
-      {/* Recent Events */}
       {recentEvents.length > 0 && (
         <div className="homepage-section">
           <div className="section-header">
@@ -83,7 +79,7 @@ function HomePage({ onNavigate }) {
           </div>
           <div className="recent-events">
             {recentEvents.map(event => (
-              <div key={event.id} className="recent-event-card stitch-card" onClick={() => onNavigate('events')}>
+              <div key={event.id} className="recent-event-card" onClick={() => onNavigate('events')}>
                 <div className="recent-event-header">
                   <h4>{event.title}</h4>
                   {event.event_type && <span className="event-type">{event.event_type}</span>}
@@ -98,7 +94,6 @@ function HomePage({ onNavigate }) {
         </div>
       )}
 
-      {/* News */}
       {news.length > 0 && (
         <div className="homepage-section">
           <div className="section-header">
@@ -118,7 +113,6 @@ function HomePage({ onNavigate }) {
           </div>
         </div>
       )}
-
     </div>
   );
 }
