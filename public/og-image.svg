@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow" cx="30%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#3a0a0a" />
+      <stop offset="100%" stop-color="#0a0a0a" />
+    </radialGradient>
+    <linearGradient id="redline" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e63946" />
+      <stop offset="60%" stop-color="#e63946" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)" />
+  <rect x="0" y="0" width="4" height="630" fill="#e63946" />
+  <rect x="0" y="314" width="720" height="2" fill="url(#redline)" />
+  <text x="80" y="260" font-family="'Arial Black', sans-serif" font-weight="900" font-size="120" letter-spacing="20" fill="#e63946" text-anchor="start">VAROOM</text>
+  <text x="82" y="340" font-family="Arial, sans-serif" font-weight="400" font-size="28" letter-spacing="4" fill="#888888" text-anchor="start">UK CAR &amp; BIKE EVENTS</text>
+  <text x="82" y="420" font-family="Arial, sans-serif" font-weight="300" font-size="22" fill="#555555" text-anchor="start">Meets · Auctions · Races · Autojumbles</text>
+  <text x="1120" y="600" font-family="Arial, sans-serif" font-size="18" fill="#333333" text-anchor="end">varoom.app</text>
+</svg>
