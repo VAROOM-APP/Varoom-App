@@ -1368,3 +1368,371 @@ body {
 :root.theme-retro .auth-button:hover {
   background-color: var(--retro-accent2);
 }
+/* ═══════════════════════════════════════════════════════════ */
+/* ─── RETRO HOMEPAGE LAYOUT ───────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════ */
+
+/* Retro hero — two column */
+.retro-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 60px 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.retro-hero-left { display: flex; flex-direction: column; gap: 16px; }
+
+.retro-headline {
+  font-family: 'Lobster Two', Georgia, serif;
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.retro-section-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--retro-accent2, #e8831a);
+  margin-bottom: 8px;
+}
+
+/* Featured hero card in retro */
+.retro-featured-hero-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background-color: rgba(255,255,255,0.04);
+  border: 1px solid var(--retro-border, #4a2e12);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.retro-featured-hero-card:hover { border-color: var(--retro-accent, #c4501a); }
+
+.retro-featured-hero-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  filter: sepia(30%) contrast(1.05);
+}
+
+.retro-featured-hero-content {
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.retro-tag {
+  display: inline-block;
+  background-color: var(--retro-accent, #c4501a);
+  color: #f0e6d0;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Playfair Display', Georgia, serif;
+  align-self: flex-start;
+}
+
+.retro-featured-hero-content h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--retro-text, #f0e6d0);
+  line-height: 1.3;
+}
+
+.retro-featured-hero-content p {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: var(--retro-text2, #b8a080);
+  line-height: 1.5;
+}
+
+.retro-find-more {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: var(--retro-accent2, #e8831a);
+  font-style: italic;
+}
+
+/* ─── Newspaper section ───────────────────────────────────── */
+.retro-newspaper-section {
+  padding: 0 0 32px;
+  position: relative;
+}
+
+.retro-newspaper-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #d4b483 0%, #c8a86e 40%, #b8975a 100%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.retro-recent-section::before {
+  opacity: 0.05;
+}
+
+.retro-newspaper-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 40px 20px;
+}
+
+.retro-newspaper-rule {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--retro-border, #4a2e12), transparent);
+}
+
+.retro-newspaper-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--retro-text2, #b8a080);
+  white-space: nowrap;
+}
+
+/* Newspaper grid */
+.retro-newspaper-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 0 40px;
+  border-top: 2px solid var(--retro-border, #4a2e12);
+  border-bottom: 2px solid var(--retro-border, #4a2e12);
+}
+
+.retro-newspaper-card {
+  padding: 16px 16px 20px;
+  border-right: 1px solid var(--retro-border, #4a2e12);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.retro-newspaper-card:last-child { border-right: none; }
+
+.retro-newspaper-card:hover {
+  background: rgba(196, 80, 26, 0.05);
+}
+
+/* Halftone placeholder */
+.retro-halftone-placeholder {
+  width: 100%;
+  height: 120px;
+  background-size: 60px 60px;
+  background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-newspaper-halftone {
+  height: 100px;
+}
+
+.retro-halftone-type {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #6b4a1a;
+  background: rgba(200, 168, 110, 0.85);
+  padding: 2px 8px;
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+}
+
+.retro-newspaper-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  filter: sepia(60%) contrast(1.1) grayscale(20%);
+  margin-bottom: 10px;
+}
+
+/* Date stamp */
+.retro-date-stamp {
+  display: inline-block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--retro-accent, #c4501a);
+  background: rgba(196, 80, 26, 0.1);
+  border: 1px solid var(--retro-accent, #c4501a);
+  padding: 2px 6px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.retro-newspaper-card-content h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--retro-text, #f0e6d0);
+  line-height: 1.3;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.retro-newspaper-location {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  color: var(--retro-text2, #b8a080);
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.retro-newspaper-desc {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  color: var(--retro-text2, #b8a080);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.retro-buy-btn {
+  display: inline-block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--retro-text, #f0e6d0);
+  background-color: var(--retro-accent, #c4501a);
+  padding: 4px 10px;
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+.retro-buy-btn:hover { background-color: var(--retro-accent2, #e8831a); }
+
+/* ─── Hybrid grid (Recently Added) ───────────────────────── */
+.retro-hybrid-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 0 40px 8px;
+}
+
+.retro-hybrid-card {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.retro-hybrid-card:hover { opacity: 0.85; }
+
+.retro-hybrid-photo {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.retro-hybrid-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  filter: sepia(50%) contrast(1.1) grayscale(15%);
+}
+
+.retro-hybrid-photo .retro-date-stamp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+}
+
+.retro-hybrid-content h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--retro-text, #f0e6d0);
+  line-height: 1.3;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.retro-hybrid-content p {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  color: var(--retro-text2, #b8a080);
+  font-style: italic;
+}
+
+.retro-verified {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  padding: 1px 6px;
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Retro footer */
+.retro-footer {
+  background-color: var(--retro-bg2, #241508) !important;
+  border-top: 2px solid var(--retro-border, #4a2e12) !important;
+}
+
+/* ─── Retro mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .retro-hero-inner {
+    grid-template-columns: 1fr;
+    padding: 40px 20px 32px;
+    gap: 24px;
+  }
+
+  .retro-newspaper-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 16px;
+  }
+
+  .retro-newspaper-card {
+    padding: 12px 12px 16px;
+  }
+
+  .retro-newspaper-card:nth-child(even) { border-right: none; }
+  .retro-newspaper-card:nth-child(odd):not(:nth-last-child(-n+2)) {
+    border-bottom: 1px solid var(--retro-border, #4a2e12);
+  }
+
+  .retro-hybrid-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .retro-newspaper-header {
+    padding: 20px 16px 16px;
+  }
+
+  .retro-headline { font-size: 36px; }
+}
