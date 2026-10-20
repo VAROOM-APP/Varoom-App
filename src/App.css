@@ -873,3 +873,498 @@ body {
 @media (min-width: 1100px) {
   .carousel-card { flex: 0 0 calc(33.333% - 11px); }
 }
+
+/* ─── Theme Toggle Button ─────────────────────────────────── */
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid #333333;
+  color: #888888;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  font-family: 'Space Mono', Consolas, monospace;
+}
+
+.theme-toggle-btn:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+/* ─── Footer Nav ──────────────────────────────────────────── */
+.site-footer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 24px;
+  border-top: 1px solid #1e1e1e;
+  flex-wrap: wrap;
+}
+
+.site-footer button {
+  background: none;
+  border: 1px solid #2a2a2a;
+  color: #666666;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: 'Space Mono', Consolas, monospace;
+  transition: all 0.2s;
+}
+
+.site-footer button:hover {
+  border-color: #e63946;
+  color: #e63946;
+}
+
+/* ─── Motorbike Hero ──────────────────────────────────────── */
+.moto-hero-wrapper {
+  background: linear-gradient(105deg, #0a0a0a 45%, #0a1a1a 100%) !important;
+}
+
+.moto-hero-wrapper::before {
+  background: radial-gradient(ellipse at right center, rgba(42,157,143,0.15) 0%, transparent 70%) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* ─── RETRO THEME ─────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════ */
+
+:root.theme-retro {
+  --retro-bg: #1a0e05;
+  --retro-bg2: #241508;
+  --retro-bg3: #2e1a0a;
+  --retro-accent: #c4501a;
+  --retro-accent2: #e8831a;
+  --retro-text: #f0e6d0;
+  --retro-text2: #b8a080;
+  --retro-border: #4a2e12;
+  --retro-card: #221408;
+  --retro-font: 'Lobster Two', 'Playfair Display', Georgia, serif;
+  --retro-body-font: 'Playfair Display', Georgia, serif;
+}
+
+:root.theme-retro body {
+  background-color: var(--retro-bg);
+  color: var(--retro-text);
+}
+
+/* Grain texture overlay */
+:root.theme-retro body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+:root.theme-retro .header {
+  background-color: var(--retro-bg2);
+  border-bottom: 2px solid var(--retro-border);
+}
+
+:root.theme-retro .header h1 {
+  font-family: var(--retro-font);
+  color: var(--retro-accent2);
+  background: linear-gradient(180deg, #f5c842 0%, #c4501a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px;
+  font-size: 30px;
+}
+
+:root.theme-retro .header-btn {
+  background-color: var(--retro-accent);
+  border-radius: 8px;
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .theme-toggle-btn {
+  border-color: var(--retro-border);
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .theme-toggle-btn:hover {
+  border-color: var(--retro-accent);
+  color: var(--retro-accent2);
+}
+
+:root.theme-retro .search-input {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+  font-family: var(--retro-body-font);
+}
+
+/* Retro hero */
+:root.theme-retro .hero-wrapper {
+  background: radial-gradient(ellipse at 20% 50%, #3d1f08 0%, #1a0e05 60%, #0d0803 100%);
+  border-bottom: 2px solid var(--retro-border);
+}
+
+:root.theme-retro .hero-wrapper::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cpath d='M200 400 C150 350 80 300 60 220 C40 140 80 80 120 60 C160 40 200 60 200 60 C200 60 240 40 280 60 C320 80 360 140 340 220 C320 300 250 350 200 400Z' fill='none' stroke='%23c4501a' stroke-width='1' opacity='0.15'/%3E%3Cpath d='M200 380 C155 335 90 285 72 210 C54 135 90 80 126 62 C162 44 200 62 200 62 C200 62 238 44 274 62 C310 80 346 135 328 210 C310 285 245 335 200 380Z' fill='none' stroke='%23e8831a' stroke-width='0.5' opacity='0.1'/%3E%3C/svg%3E") right center / 500px no-repeat;
+  opacity: 0.6;
+  width: 60%;
+}
+
+:root.theme-retro .hero-wrapper::after {
+  background: linear-gradient(90deg, var(--retro-accent), transparent 60%);
+}
+
+:root.theme-retro .hero-eyebrow {
+  color: var(--retro-accent2);
+  font-family: var(--retro-body-font);
+  letter-spacing: 4px;
+}
+
+:root.theme-retro .hero-content h2 {
+  font-family: var(--retro-font);
+  color: var(--retro-text);
+  letter-spacing: 0px;
+  line-height: 1.1;
+}
+
+:root.theme-retro .hero-sub {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .hero-btn.primary {
+  background-color: var(--retro-accent);
+  border-radius: 30px;
+  font-family: var(--retro-body-font);
+  letter-spacing: 2px;
+}
+
+:root.theme-retro .hero-btn.primary:hover {
+  background-color: var(--retro-accent2);
+}
+
+:root.theme-retro .hero-btn.secondary {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+  border-radius: 30px;
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .hero-btn.secondary:hover {
+  border-color: var(--retro-accent);
+  background-color: var(--retro-accent);
+}
+
+/* Retro sections */
+:root.theme-retro .homepage-section {
+  border-bottom: 1px solid var(--retro-border);
+}
+
+:root.theme-retro .section-header h3 {
+  font-family: var(--retro-body-font);
+  color: var(--retro-accent2);
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+:root.theme-retro .section-line {
+  background-color: var(--retro-border);
+}
+
+/* Retro featured card */
+:root.theme-retro .featured-card {
+  background-color: var(--retro-card);
+  border-color: var(--retro-border);
+}
+
+:root.theme-retro .featured-card:hover {
+  border-color: var(--retro-accent);
+  outline-color: rgba(196, 80, 26, 0.5);
+  box-shadow: inset 0 0 0 7px var(--retro-card), inset 0 0 0 8px rgba(196, 80, 26, 0.25);
+}
+
+:root.theme-retro .featured-placeholder {
+  background-color: var(--retro-bg3);
+}
+
+:root.theme-retro .featured-tag {
+  background-color: var(--retro-accent);
+  border-radius: 20px;
+}
+
+:root.theme-retro .featured-content h4 {
+  font-family: var(--retro-body-font);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .featured-content p {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .featured-link {
+  color: var(--retro-accent2);
+  font-family: var(--retro-body-font);
+}
+
+/* Retro event cards */
+:root.theme-retro .event-card {
+  background-color: var(--retro-card);
+  border-color: var(--retro-border);
+  outline-color: rgba(196, 80, 26, 0.45);
+  box-shadow: inset 0 0 0 7px var(--retro-card), inset 0 0 0 8px rgba(196, 80, 26, 0.2);
+}
+
+:root.theme-retro .event-card:hover {
+  outline-color: rgba(196, 80, 26, 0.75);
+  box-shadow: inset 0 0 0 7px var(--retro-card), inset 0 0 0 8px rgba(196, 80, 26, 0.45);
+}
+
+:root.theme-retro .event-card.selected {
+  background-color: #2a1008;
+  box-shadow: inset 0 0 0 7px #2a1008, inset 0 0 0 8px var(--retro-accent);
+}
+
+:root.theme-retro .event-card h2 {
+  font-family: var(--retro-body-font);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .event-meta {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .event-type {
+  background-color: var(--retro-accent);
+  border-radius: 20px;
+}
+
+:root.theme-retro .event-detail-panel {
+  background-color: #2a1008;
+  border-color: var(--retro-accent);
+  outline-color: rgba(196, 80, 26, 0.35);
+  box-shadow: inset 0 0 0 7px #2a1008, inset 0 0 0 8px rgba(196, 80, 26, 0.25);
+}
+
+:root.theme-retro .sidebar-meta {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .sidebar-description {
+  color: var(--retro-text);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .sidebar-link {
+  border-radius: 20px;
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .directions-btn,
+:root.theme-retro .calendar-btn {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .tickets-btn {
+  background-color: var(--retro-accent);
+}
+
+/* Retro recent event cards */
+:root.theme-retro .recent-event-card {
+  background-color: var(--retro-card);
+  border-color: var(--retro-border);
+  outline-color: rgba(196, 80, 26, 0.45);
+  box-shadow: inset 0 0 0 7px var(--retro-card), inset 0 0 0 8px rgba(196, 80, 26, 0.18);
+}
+
+:root.theme-retro .recent-event-card:hover {
+  outline-color: rgba(196, 80, 26, 0.75);
+}
+
+:root.theme-retro .recent-event-header h4 {
+  font-family: var(--retro-body-font);
+  color: var(--retro-text);
+}
+
+/* Retro filters */
+:root.theme-retro .filters {
+  background-color: var(--retro-bg2);
+  border-bottom-color: var(--retro-border);
+}
+
+:root.theme-retro .filter-pill {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+  border-radius: 20px;
+}
+
+:root.theme-retro .filter-pill.active {
+  background-color: var(--retro-accent);
+  border-color: var(--retro-accent);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .filter-pill:hover {
+  border-color: var(--retro-accent);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .filter-dropdown-menu {
+  background-color: var(--retro-bg2);
+  border-color: var(--retro-border);
+}
+
+:root.theme-retro .filter-dropdown-item {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .filter-dropdown-item:hover {
+  background-color: var(--retro-bg3);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .filter-dropdown-item.active {
+  background-color: var(--retro-accent);
+}
+
+:root.theme-retro .date-filters input {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+  font-family: var(--retro-body-font);
+  border-radius: 20px;
+}
+
+/* Retro map toggle */
+:root.theme-retro .map-toggle-btn {
+  background-color: var(--retro-bg2);
+  border-bottom-color: var(--retro-border);
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .map-toggle-btn:hover,
+:root.theme-retro .map-toggle-btn.open {
+  background-color: var(--retro-bg3);
+  color: var(--retro-accent2);
+}
+
+/* Retro map bottom sheet */
+:root.theme-retro .map-bottom-sheet {
+  background-color: var(--retro-bg2);
+  border-top-color: var(--retro-accent);
+}
+
+:root.theme-retro .sheet-title {
+  font-family: var(--retro-body-font);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .sheet-meta {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .sheet-action-btn {
+  font-family: var(--retro-body-font);
+  border-radius: 20px;
+}
+
+:root.theme-retro .sheet-action-btn.directions-btn,
+:root.theme-retro .sheet-action-btn.calendar-btn {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+}
+
+:root.theme-retro .sheet-action-btn.tickets-btn {
+  background-color: var(--retro-accent);
+}
+
+/* Retro carousel dots */
+:root.theme-retro .carousel-dot {
+  background-color: var(--retro-border);
+}
+
+:root.theme-retro .carousel-dot.active {
+  background-color: var(--retro-accent);
+}
+
+/* Retro footer */
+:root.theme-retro .site-footer {
+  border-top-color: var(--retro-border);
+  background-color: var(--retro-bg2);
+}
+
+:root.theme-retro .site-footer button {
+  border-color: var(--retro-border);
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+  border-radius: 20px;
+}
+
+:root.theme-retro .site-footer button:hover {
+  border-color: var(--retro-accent);
+  color: var(--retro-accent2);
+}
+
+/* Retro news */
+:root.theme-retro .news-card {
+  background-color: var(--retro-card);
+  border-color: var(--retro-border);
+}
+
+:root.theme-retro .news-content h4 {
+  font-family: var(--retro-body-font);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .news-content p {
+  color: var(--retro-text2);
+  font-family: var(--retro-body-font);
+}
+
+/* Retro auth */
+:root.theme-retro .auth-container {
+  background-color: var(--retro-bg2);
+  border-color: var(--retro-border);
+}
+
+:root.theme-retro .auth-container h2 {
+  font-family: var(--retro-font);
+  color: var(--retro-text);
+}
+
+:root.theme-retro .auth-input {
+  background-color: var(--retro-bg3);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+  font-family: var(--retro-body-font);
+}
+
+:root.theme-retro .auth-button {
+  background-color: var(--retro-accent);
+  font-family: var(--retro-body-font);
+  border-radius: 20px;
+}
+
+:root.theme-retro .auth-button:hover {
+  background-color: var(--retro-accent2);
+}

@@ -6,6 +6,7 @@ import MapView from './MapView';
 import Auth from './Auth';
 import SavedEvents from './SavedEvents';
 import HomePage from './HomePage';
+import MotorbikePage from './MotorbikePage';
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const LIBRARIES = ['places'];
@@ -60,7 +61,7 @@ function App() {
   const [filterVehicle, setFilterVehicle] = useState('all');
   const [filterMarque, setFilterMarque] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
@@ -76,6 +77,17 @@ function App() {
   const [distanceEnabled, setDistanceEnabled] = useState(false);
   const [distanceMiles, setDistanceMiles] = useState(15);
   const [geocodeError, setGeocodeError] = useState('');
+  const [retro, setRetro] = useState(() => localStorage.getItem('varoom-theme') === 'retro');
+
+  useEffect(() => {
+    if (retro) {
+      document.documentElement.classList.add('theme-retro');
+      localStorage.setItem('varoom-theme', 'retro');
+    } else {
+      document.documentElement.classList.remove('theme-retro');
+      localStorage.setItem('varoom-theme', 'modern');
+    }
+  }, [retro]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -99,7 +111,7 @@ function App() {
           setUserLocation(loc);
           setFilterLocation(loc);
         },
-        () => console.log('Location access denied')
+        () => {}
       );
     }
   }, []);
@@ -174,9 +186,87 @@ function App() {
     return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(event.title) + '&dates=' + date + 'T' + startTime + 'Z/' + date + 'T' + endTime + 'Z&location=' + encodeURIComponent(location) + '&details=' + encodeURIComponent(details);
   };
 
+  const filtersBar = (
+    <div className="filters">
+      <FilterDropdown
+        label="Event Type"
+        value={filterType}
+        onChange={setFilterType}
+        options={[
+          { value: 'all', label: 'All Events' },
+          { value: 'meets', label: 'Meets' },
+          { value: 'auctions', label: 'Auctions' },
+          { value: 'races', label: 'Races' },
+          { value: 'autojumbles', label: 'Autojumbles' },
+        ]}
+      />
+      <FilterDropdown
+        label="Vehicle"
+        value={filterVehicle}
+        onChange={setFilterVehicle}
+        options={[
+          { value: 'all', label: 'All Vehicles' },
+          { value: 'car', label: 'Cars' },
+          { value: 'motorbike', label: 'Motorbikes' },
+        ]}
+      />
+      <FilterDropdown
+        label="Marque"
+        value={filterMarque}
+        onChange={setFilterMarque}
+        options={marques.map(m => ({ value: m, label: m === 'all' ? 'All Marques' : m }))}
+      />
+      <div className="filter-divider" />
+      <div className="distance-filter">
+        <button
+          className={`filter-pill ${distanceEnabled ? 'active' : ''}`}
+          onClick={() => setDistanceEnabled(!distanceEnabled)}
+        >
+          📍 Nearby {distanceEnabled ? `· ${distanceMiles}mi` : ''} <span className="filter-pill-arrow">{distanceEnabled ? '▲' : '▼'}</span>
+        </button>
+        {distanceEnabled && (
+          <div className="filter-dropdown-menu distance-dropdown-menu">
+            <div className="distance-location-row">
+              <input
+                type="text"
+                className="search-input distance-input"
+                placeholder="My Location"
+                value={locationInput}
+                onChange={e => setLocationInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && geocodeLocation()}
+              />
+              <button className="distance-go-btn" onClick={geocodeLocation}>Go</button>
+              {userLocation && (
+                <button className="distance-gps-btn" onClick={() => {
+                  setLocationInput('');
+                  setFilterLocation(userLocation);
+                  setGeocodeError('');
+                }}>📍 GPS</button>
+              )}
+            </div>
+            {geocodeError && <span className="geocode-error">{geocodeError}</span>}
+            <div className="distance-slider-row">
+              <span className="distance-label">{filterLocation?.label || 'My Location'} · {distanceMiles} mi</span>
+              <input
+                type="range" min="5" max="150" step="5"
+                value={distanceMiles}
+                onChange={e => setDistanceMiles(Number(e.target.value))}
+                className="distance-slider"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="date-filters">
+        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+        <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
+      </div>
+    </div>
+  );
+
   return (
     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES} onLoad={() => setMapsLoaded(true)}>
-      <div>
+      <div className="app-root">
         <div className="header">
           <h1 onClick={() => { setCurrentPage('home'); setShowAuth(false); }} style={{ cursor: 'pointer' }}>Varoom</h1>
           <div className="header-right">
@@ -184,13 +274,16 @@ function App() {
               type="text"
               placeholder="Search events..."
               value={searchQuery}
-              onChange={e => {
-                setSearchQuery(e.target.value);
-                if (currentPage !== 'events') setCurrentPage('events');
-              }}
+              onChange={e => { setSearchQuery(e.target.value); if (currentPage !== 'events') setCurrentPage('events'); }}
               className="search-input header-search"
             />
-            <button onClick={() => setCurrentPage('events')} className={`header-btn ${currentPage === 'events' ? 'active' : ''}`}>Events</button>
+            <button
+              className="theme-toggle-btn"
+              onClick={() => setRetro(!retro)}
+              title={retro ? 'Switch to Modern' : 'Switch to Retro'}
+            >
+              {retro ? '⚡ Modern' : '🕰 Retro'}
+            </button>
             {user ? (
               <>
                 <button onClick={() => setCurrentPage(currentPage === 'saved' ? 'home' : 'saved')} className={`header-btn ${currentPage === 'saved' ? 'active' : ''}`}>♥ Saved</button>
@@ -210,11 +303,27 @@ function App() {
         )}
 
         {!showAuth && currentPage === 'home' && (
-          <HomePage onNavigate={(page, openMap) => {
-            setCurrentPage(page);
-            setMapExpanded(openMap ? true : false);
-            setMapFullScreen(openMap ? true : false);
-          }} />
+          <HomePage
+            onNavigate={(page, openMap, vehicle) => {
+              setCurrentPage(page === 'motorbikes' ? 'motorbikes' : page);
+              if (vehicle) setFilterVehicle(vehicle);
+              setMapExpanded(openMap ? true : false);
+              setMapFullScreen(openMap ? true : false);
+            }}
+            userLocation={userLocation}
+            events={events}
+          />
+        )}
+
+        {!showAuth && currentPage === 'motorbikes' && (
+          <MotorbikePage
+            events={events}
+            savedEvents={savedEvents}
+            toggleSaveEvent={toggleSaveEvent}
+            getCalendarUrl={getCalendarUrl}
+            onNavigate={setCurrentPage}
+            userLocation={userLocation}
+          />
         )}
 
         {!showAuth && currentPage === 'saved' && user && (
@@ -237,116 +346,23 @@ function App() {
               distanceEnabled={distanceEnabled}
               distanceMiles={distanceMiles}
             />
-
-            <div className="filters">
-              <FilterDropdown
-                label="Event Type"
-                value={filterType}
-                onChange={setFilterType}
-                options={[
-                  { value: 'all', label: 'All Events' },
-                  { value: 'meets', label: 'Meets' },
-                  { value: 'auctions', label: 'Auctions' },
-                  { value: 'races', label: 'Races' },
-                  { value: 'autojumbles', label: 'Autojumbles' },
-                ]}
-              />
-              <FilterDropdown
-                label="Vehicle"
-                value={filterVehicle}
-                onChange={setFilterVehicle}
-                options={[
-                  { value: 'all', label: 'All Vehicles' },
-                  { value: 'car', label: 'Cars' },
-                  { value: 'motorbike', label: 'Motorbikes' },
-                ]}
-              />
-              <FilterDropdown
-                label="Marque"
-                value={filterMarque}
-                onChange={setFilterMarque}
-                options={marques.map(m => ({ value: m, label: m === 'all' ? 'All Marques' : m }))}
-              />
-              <div className="filter-divider" />
-              <div className="distance-filter">
-                <button
-                  className={`filter-pill ${distanceEnabled ? 'active' : ''}`}
-                  onClick={() => setDistanceEnabled(!distanceEnabled)}
-                >
-                  📍 Nearby {distanceEnabled ? `· ${distanceMiles}mi` : ''} <span className="filter-pill-arrow">{distanceEnabled ? '▲' : '▼'}</span>
-                </button>
-                {distanceEnabled && (
-                  <div className="filter-dropdown-menu distance-dropdown-menu">
-                    <div className="distance-location-row">
-                      <input
-                        type="text"
-                        className="search-input distance-input"
-                        placeholder="My Location"
-                        value={locationInput}
-                        onChange={e => setLocationInput(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && geocodeLocation()}
-                      />
-                      <button className="distance-go-btn" onClick={geocodeLocation}>Go</button>
-                      {userLocation && (
-                        <button className="distance-gps-btn" onClick={() => {
-                          setLocationInput('');
-                          setFilterLocation(userLocation);
-                          setGeocodeError('');
-                        }}>📍 GPS</button>
-                      )}
-                    </div>
-                    {geocodeError && <span className="geocode-error">{geocodeError}</span>}
-                    <div className="distance-slider-row">
-                      <span className="distance-label">
-                        {filterLocation?.label || 'My Location'} · {distanceMiles} mi
-                      </span>
-                      <input
-                        type="range"
-                        min="5"
-                        max="150"
-                        step="5"
-                        value={distanceMiles}
-                        onChange={e => setDistanceMiles(Number(e.target.value))}
-                        className="distance-slider"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="date-filters">
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={e => {
-                    setStartDate(e.target.value);
-                    setEndDate('');
-                    setTimeout(() => document.getElementById('endDate').showPicker(), 100);
-                  }}
-                />
-                <input id="endDate" type="date" value={endDate} min={startDate} onChange={e => setEndDate(e.target.value)} />
-              </div>
-            </div>
-
+            {filtersBar}
             <div className="events-list">
               {filteredEvents.length === 0 ? (
-                <p>No events found</p>
+                <p style={{ color: '#666', padding: '20px' }}>No events found</p>
               ) : (
                 filteredEvents.map(event => (
                   <div key={event.id}>
                     <div
                       className={`event-card ${selectedEvent?.id === event.id ? 'selected' : ''}`}
                       onClick={() => {
-                        const newSelected = selectedEvent?.id === event.id ? null : event;
-                        setSelectedEvent(newSelected);
-                        if (newSelected) window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setSelectedEvent(selectedEvent?.id === event.id ? null : event);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                     >
                       <div className="event-card-header">
                         <h2>{event.title}</h2>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); toggleSaveEvent(event.id); }}
-                          className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}
-                        >
+                        <button onClick={(e) => { e.stopPropagation(); toggleSaveEvent(event.id); }} className={`save-btn ${savedEvents.includes(event.id) ? 'saved' : ''}`}>
                           {savedEvents.includes(event.id) ? '♥' : '♡'}
                         </button>
                       </div>
@@ -357,11 +373,12 @@ function App() {
                         <span className="event-type">{event.event_type}</span>
                         {event.marque && <span className="event-type">{event.marque}</span>}
                         {event.is_recurring && <span className="event-type recurring">🔄 {event.recurrence}</span>}
+                        {event.is_verified && <span className="verified-badge">✓ Verified</span>}
                       </div>
                     </div>
-
                     {selectedEvent?.id === event.id && (
                       <div className="event-detail-panel">
+                        {event.is_verified && <div className="verified-badge">✓ Verified Event</div>}
                         <div className="sidebar-meta">
                           <p>📅 {event.date}</p>
                           <p>🕐 {event.start_time}</p>
@@ -372,9 +389,9 @@ function App() {
                         </div>
                         {event.description && <p className="sidebar-description">{event.description}</p>}
                         <div className="event-detail-actions">
-                          <a href={'https://www.google.com/maps/dir/?api=1&destination=' + event.latitude + ',' + event.longitude} target="_blank" rel="noreferrer" className="sheet-action-btn directions-btn">🗺 Get Directions</a>
-                          <a href={getCalendarUrl(event)} target="_blank" rel="noreferrer" className="sheet-action-btn calendar-btn">📅 Add to Calendar</a>
-                          {event.external_link && <a href={event.external_link} target="_blank" rel="noreferrer" className="sheet-action-btn tickets-btn">🎟 More Info / Tickets</a>}
+                          <a href={'https://www.google.com/maps/dir/?api=1&destination=' + event.latitude + ',' + event.longitude} target="_blank" rel="noreferrer" className="sidebar-link directions-btn">🗺 Get Directions</a>
+                          <a href={getCalendarUrl(event)} target="_blank" rel="noreferrer" className="sidebar-link calendar-btn">📅 Add to Calendar</a>
+                          {event.external_link && <a href={event.external_link} target="_blank" rel="noreferrer" className="sidebar-link tickets-btn">🎟 More Info</a>}
                         </div>
                       </div>
                     )}
@@ -382,6 +399,15 @@ function App() {
                 ))
               )}
             </div>
+
+            {/* Footer nav */}
+            <footer className="site-footer">
+              <button onClick={() => { setFilterType('meets'); setFilterVehicle('all'); }}>All Meets</button>
+              <button onClick={() => { setFilterType('auctions'); setFilterVehicle('all'); }}>All Auctions</button>
+              <button onClick={() => { setFilterType('races'); setFilterVehicle('all'); }}>All Races</button>
+              <button onClick={() => { setFilterVehicle('motorbike'); setCurrentPage('motorbikes'); }}>🏍 Motorbikes</button>
+              <button onClick={() => setMapExpanded(true)}>Explore Map</button>
+            </footer>
           </div>
         )}
       </div>
