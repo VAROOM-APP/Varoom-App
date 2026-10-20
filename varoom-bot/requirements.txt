@@ -1,5 +1,7 @@
-python-telegram-bot==22.6
+python-telegram-bot==20.7
 anthropic
 supabase
+python-dotenv
 requests
 beautifulsoup4
+schedule
